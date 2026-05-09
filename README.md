@@ -1,3 +1,14 @@
+---
+title: RAB NAC Reviewer Copilot
+colorFrom: blue
+colorTo: gray
+sdk: gradio
+sdk_version: 5.0.0
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # RAB NAC Reviewer Copilot
 
 RAB NAC Reviewer Copilot adalah aplikasi web internal berbasis Gradio untuk membantu review awal dokumen RAB Indonesia dan mendeteksi **Potensi NAC** dalam konteks komponen subsidi PLN/Kemenkeu/PMK.
@@ -140,4 +151,3 @@ Pada hosting gratis, filesystem tidak selalu ideal untuk catatan bisnis permanen
 5. Beri feedback untuk false positive, false negative, dan item yang perlu manual review.
 6. Tambahkan sinonim/exception jika pola berulang.
 7. Export Excel untuk dokumentasi review.
-
