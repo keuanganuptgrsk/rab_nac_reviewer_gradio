@@ -72,6 +72,7 @@ def init_db():
         )
     seed_db_if_empty()
     ensure_demo_keywords()
+    ensure_fast_review_defaults()
     create_templates()
 
 
@@ -128,7 +129,7 @@ def seed_db_if_empty():
         )
         defaults = {
             "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-            "enable_semantic": "true",
+            "enable_semantic": "false",
             "enable_stemming": "false",
             "fuzzy_threshold": "78",
             "semantic_threshold": "60",
@@ -192,6 +193,14 @@ def ensure_demo_keywords():
                         "INSERT INTO nac_synonyms (nac_keyword_id, synonym, weight, status, created_at) VALUES (?, ?, 0.9, 'active', ?)",
                         (keyword_id, synonym, now()),
                     )
+
+
+def ensure_fast_review_defaults():
+    settings = get_settings()
+    if settings.get("semantic_user_configured") == "true":
+        return
+    if settings.get("enable_semantic") != "false":
+        save_setting("enable_semantic", "false")
 
 
 def rows(query, params=()):

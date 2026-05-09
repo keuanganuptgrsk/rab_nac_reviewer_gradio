@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.6 - Responsive Review Button - 2026-05-09
+
+- Menambahkan status proses langsung setelah tombol `Run NAC Review` ditekan.
+- Tombol dinonaktifkan sementara dan label berubah menjadi `Sedang memproses...` selama review berjalan.
+- Semantic matching dimatikan secara default agar review Excel lebih cepat di Hugging Face CPU Basic.
+- Semantic matching tetap bisa dinyalakan manual dari Settings untuk review lanjutan.
+
 ## v0.5.5 - Stable Tab Bar - 2026-05-09
 
 - Menjaga tab navigasi tetap horizontal dan tidak berubah menjadi menu titik tiga.

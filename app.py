@@ -572,6 +572,7 @@ def save_settings_ui(model, enable_semantic, enable_stemming, fuzzy, semantic, e
         "feedback_weight": feedback_w,
         "allowable_penalty_weight": allowable_w,
         "ocr_mode": ocr_mode,
+        "semantic_user_configured": "true",
     }
     for k, v in values.items():
         db.save_setting(k, v)
@@ -581,6 +582,17 @@ def save_settings_ui(model, enable_semantic, enable_stemming, fuzzy, semantic, e
 def reset_db_ui():
     db.reset_demo_database()
     return "Demo database direset."
+
+
+def review_started_ui():
+    return (
+        gr.update(value="Memproses NAC review... mohon tunggu sebentar.", visible=True),
+        gr.update(interactive=False, value="Sedang memproses..."),
+    )
+
+
+def review_finished_ui():
+    return gr.update(interactive=True, value="Run NAC Review")
 
 
 def app():
@@ -614,6 +626,7 @@ def app():
                 unit_price_col = gr.Dropdown(label="Unit Price", visible=False)
                 total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
+                run_status = gr.Markdown(visible=False)
                 auto_results_df = gr.Dataframe(label="Hasil Review - Confidence Sedang hingga Sangat Tinggi", visible=False)
             with gr.Tab("Review Hasil"):
                 result_msg = gr.Markdown()
@@ -727,7 +740,7 @@ def app():
                     label="Embedding model name",
                     allow_custom_value=True,
                 )
-                enable_sem = gr.Checkbox(value=settings.get("enable_semantic", "true") == "true", label="Enable semantic matching")
+                enable_sem = gr.Checkbox(value=settings.get("enable_semantic", "false") == "true", label="Enable semantic matching")
                 enable_stem = gr.Checkbox(value=settings.get("enable_stemming", "false") == "true", label="Enable stemming")
                 with gr.Row():
                     fuzzy_thr = gr.Number(value=float(settings.get("fuzzy_threshold", 78)), label="Fuzzy threshold")
@@ -760,9 +773,16 @@ def app():
             [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
         )
         run_btn.click(
+            review_started_ui,
+            outputs=[run_status, run_btn],
+            queue=False,
+        ).then(
             run_review,
             [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col],
             [auto_results_df, results_state, result_msg, results_df],
+        ).then(
+            review_finished_ui,
+            outputs=run_btn,
         )
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)

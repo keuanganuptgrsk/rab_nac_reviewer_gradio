@@ -22,7 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.5.5 - Stable Tab Bar`.
+- Versi saat ini: `v0.5.6 - Responsive Review Button`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.

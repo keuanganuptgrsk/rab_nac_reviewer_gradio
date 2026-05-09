@@ -1,7 +1,7 @@
-APP_VERSION = "0.5.5"
-APP_RELEASE_TITLE = "Stable Tab Bar"
+APP_VERSION = "0.5.6"
+APP_RELEASE_TITLE = "Responsive Review Button"
 APP_RELEASE_NOTES = (
-    "Tab navigasi dibuat stabil agar tidak berubah menjadi menu titik tiga; jika layar sempit, tab tetap horizontal dan dapat discroll."
+    "Tombol Run NAC Review sekarang langsung menampilkan status proses, sementara semantic matching dimatikan secara default agar review lebih cepat di hosting gratis."
 )
 
 
