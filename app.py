@@ -22,25 +22,27 @@ DISCLAIMER = (
 BASE_DIR = Path(__file__).resolve().parent
 db.init_db()
 
-TABTION_THEME_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+FLUENTLY_THEME_CSS = """
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
     --rab-bg: #ffffff;
-    --rab-primary: #dcfce7;
-    --rab-secondary: #0b61a2;
-    --rab-accent: #15803d;
-    --rab-text: #1d1d1f;
-    --rab-muted: #667085;
-    --rab-border: #d9eadf;
-    --rab-soft: #f7fdf9;
+    --rab-primary: #0b1220;
+    --rab-secondary: #475569;
+    --rab-accent: #1665d6;
+    --rab-text: #0b1220;
+    --rab-heading: #1665d6;
+    --rab-muted: #64748b;
+    --rab-border: #dbe7f7;
+    --rab-soft: #f8fbff;
+    --rab-accent-soft: #eef6ff;
 }
 
 body,
 .gradio-container {
     background: var(--rab-bg) !important;
     color: var(--rab-text) !important;
-    font-family: "Geist", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-family: "DM Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
 }
 
 .gradio-container {
@@ -50,28 +52,32 @@ body,
 }
 
 h1, h2, h3, .prose h1, .prose h2, .prose h3 {
-    font-family: "Manrope", "Geist", Inter, sans-serif !important;
-    color: var(--rab-text) !important;
+    font-family: "DM Sans", Inter, sans-serif !important;
+    color: var(--rab-heading) !important;
     letter-spacing: 0 !important;
 }
 
 #app-hero {
-    background: linear-gradient(135deg, #ffffff 0%, #f7fdf9 52%, #dcfce7 100%);
+    background:
+        radial-gradient(circle at 82% 18%, rgba(22, 101, 214, 0.16), transparent 32%),
+        linear-gradient(135deg, #ffffff 0%, #f8fbff 48%, #eef6ff 100%);
     border: 1px solid var(--rab-border);
     border-radius: 8px;
-    padding: 28px 30px;
+    padding: 30px 32px;
     margin-bottom: 18px;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
 }
 
 #app-hero h1 {
-    font-size: clamp(34px, 4vw, 58px);
+    font-size: clamp(34px, 5vw, 72px);
     line-height: 1.02;
     margin: 0 0 12px;
+    font-weight: 800;
 }
 
 #app-hero p {
-    color: var(--rab-muted);
-    font-size: 16px;
+    color: var(--rab-secondary);
+    font-size: 18px;
     line-height: 1.55;
     max-width: 960px;
 }
@@ -80,18 +86,18 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3 {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--rab-accent);
+    color: #ffffff;
     background: var(--rab-primary);
-    border: 1px solid #b7efc5;
+    border: 1px solid #1e293b;
     border-radius: 999px;
-    padding: 7px 12px;
+    padding: 8px 13px;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 14px;
 }
 
 #app-hero .disclaimer {
-    color: var(--rab-secondary);
+    color: var(--rab-primary);
     font-weight: 600;
 }
 
@@ -101,7 +107,7 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3 {
 
 .tab-nav button,
 .tabs button {
-    font-family: "Geist", Inter, sans-serif !important;
+    font-family: "DM Sans", Inter, sans-serif !important;
     font-weight: 650 !important;
     color: var(--rab-muted) !important;
     border-radius: 8px 8px 0 0 !important;
@@ -125,7 +131,8 @@ button[variant="primary"] {
 
 button {
     border-radius: 8px !important;
-    font-family: "Geist", Inter, sans-serif !important;
+    font-family: "DM Sans", Inter, sans-serif !important;
+    font-weight: 700 !important;
 }
 
 .form, .panel, .block, .wrap, .container {
@@ -153,7 +160,7 @@ table {
 
 th {
     background: var(--rab-soft) !important;
-    color: var(--rab-text) !important;
+    color: var(--rab-primary) !important;
     font-weight: 700 !important;
 }
 
@@ -163,6 +170,10 @@ td {
 
 a {
     color: var(--rab-accent) !important;
+}
+
+.gradio-container .prose p {
+    color: var(--rab-secondary);
 }
 
 .markdown-code, code {
@@ -545,13 +556,13 @@ def reset_db_ui():
 def app():
     settings = db.get_settings()
     theme = gr.themes.Soft(
-        primary_hue="green",
+        primary_hue="blue",
         secondary_hue="blue",
-        neutral_hue="gray",
-        font=["Geist", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        neutral_hue="slate",
+        font=["DM Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
         font_mono=["ui-monospace", "SFMono-Regular", "Consolas", "monospace"],
     )
-    with gr.Blocks(title="RAB NAC Reviewer Copilot", theme=theme, css=TABTION_THEME_CSS) as demo:
+    with gr.Blocks(title="RAB NAC Reviewer Copilot", theme=theme, css=FLUENTLY_THEME_CSS) as demo:
         upload_state = gr.State({})
         results_state = gr.State([])
         gr.Markdown(

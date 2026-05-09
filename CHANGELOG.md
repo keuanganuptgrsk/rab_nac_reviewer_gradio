@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.1 - Fluently-Inspired UI Refresh - 2026-05-09
+
+- Mengganti arah visual dari Tabtion-inspired ke Fluently-inspired sesuai design tokens yang diberikan.
+- Menggunakan warna primary `#0B1220`, secondary `#475569`, accent/link `#1665D6`, background `#FFFFFF`, dan heading biru.
+- Mengganti font role heading/body menjadi DM Sans.
+- Memperbarui hero, tab, tombol, input, dan tabel agar terasa modern, high-energy, dan tetap cocok untuk workflow review RAB.
+
 ## v0.5.0 - Tabtion-Inspired UI Refresh - 2026-05-09
 
 - Mengadopsi arah visual modern seperti design system Tabtion dengan warna `#DCFCE7`, `#0B61A2`, `#15803D`, `#FFFFFF`, dan `#1D1D1F`.
