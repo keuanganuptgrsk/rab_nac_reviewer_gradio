@@ -12,3 +12,4 @@ PyMuPDF
 pillow
 Sastrawi
 plotly
+reportlab

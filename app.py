@@ -7,7 +7,13 @@ import pandas as pd
 
 from modules import db
 from modules.excel_loader import combine_selected_text_columns, detect_columns, load_excel_or_csv, load_rab_excel_items, normalize_dataframe
-from modules.export_engine import export_feedback_logs, export_review_excel
+from modules.export_engine import (
+    export_all_materials_excel,
+    export_all_materials_pdf,
+    export_feedback_logs,
+    export_potential_nac_pdf,
+    export_review_excel,
+)
 from modules.feedback_engine import learning_summary
 from modules.keyword_manager import export_keyword_database, import_keywords_from_excel
 from modules.nac_detector import detect_items
@@ -481,11 +487,13 @@ def _chunk_text(text, max_len=900):
 def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order):
     items, msg = build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col)
     if not items:
-        return gr.update(value="", visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
+        return gr.update(value="", visible=False), gr.update(value=pd.DataFrame(), visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
     results = detect_items(items, db.get_settings())
     summary = review_summary_dataframe(results)
+    all_materials = all_materials_dataframe(results)
     return (
         gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
+        gr.update(value=all_materials, visible=True),
         results,
         f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
         gr.update(value=summary, visible=True),
@@ -554,6 +562,29 @@ def review_summary_dataframe(results):
     )
 
 
+def all_materials_dataframe(results):
+    frame = pd.DataFrame(results or [])
+    columns = ["row_id", "item_per_rab", "matched_category", "final_confidence", "confidence_label"]
+    labels = {
+        "row_id": "Row",
+        "item_per_rab": "Nama Material",
+        "matched_category": "Kategori NAC",
+        "final_confidence": "Confidence %",
+        "confidence_label": "Kategori Confidence Level",
+    }
+    if frame.empty:
+        return pd.DataFrame(columns=list(labels.values()))
+    for col in columns:
+        if col not in frame.columns:
+            frame[col] = ""
+    frame = frame[columns].copy()
+    frame["matched_category"] = frame["matched_category"].replace("", "-").fillna("-")
+    frame["final_confidence"] = pd.to_numeric(frame["final_confidence"], errors="coerce").fillna(0).round(2)
+    frame["_row_sort"] = pd.to_numeric(frame["row_id"], errors="coerce")
+    frame = frame.sort_values("_row_sort", na_position="last").drop(columns=["_row_sort"])
+    return frame.rename(columns=labels)
+
+
 def render_sorted_findings(results, sort_by, sort_order):
     return gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=bool(results))
 
@@ -567,7 +598,7 @@ def render_findings_cards(results, sort_by="Confidence", sort_order="Tinggi ke r
         return _empty_findings("Tidak ada item dengan confidence Sedang hingga Sangat tinggi.")
     frame["_row_sort"] = frame["row_id"].apply(_row_sort_key)
     if sort_by == "Row":
-        ascending = sort_order != "Besar ke kecil"
+        ascending = sort_order == "Rendah ke tinggi"
         frame = frame.sort_values(["_row_sort", "final_confidence"], ascending=[ascending, False])
     else:
         ascending = sort_order == "Rendah ke tinggi"
@@ -783,6 +814,18 @@ def export_review_ui(results):
     return export_review_excel(results or [])
 
 
+def export_potential_pdf_ui(results):
+    return export_potential_nac_pdf(results or [])
+
+
+def export_all_pdf_ui(results):
+    return export_all_materials_pdf(results or [])
+
+
+def export_all_excel_ui(results):
+    return export_all_materials_excel(results or [])
+
+
 def backup_ui():
     return db.backup_db()
 
@@ -866,8 +909,17 @@ def app():
                 run_status = gr.Markdown(visible=False)
                 with gr.Row():
                     sort_by = gr.Radio(["Confidence", "Row"], value="Confidence", label="Urutkan berdasarkan")
-                    sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi", "Kecil ke besar", "Besar ke kecil"], value="Tinggi ke rendah", label="Arah urutan")
+                    sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi"], value="Tinggi ke rendah", label="Arah urutan")
                 auto_results_df = gr.HTML(visible=False)
+                with gr.Row():
+                    export_potential_pdf_btn = gr.Button("Export PDF Rangkuman Potensi NAC")
+                    export_all_pdf_btn = gr.Button("Export PDF Seluruh Material RAB")
+                    export_all_excel_btn = gr.Button("Export Excel Seluruh Material RAB")
+                with gr.Row():
+                    export_potential_pdf_file = gr.File(label="PDF Rangkuman Potensi NAC")
+                    export_all_pdf_file = gr.File(label="PDF Seluruh Material RAB")
+                    export_all_excel_file = gr.File(label="Excel Seluruh Material RAB")
+                all_materials_df = gr.Dataframe(label="Tabel Seluruh Material RAB", visible=False)
             with gr.Tab("Review Hasil"):
                 result_msg = gr.Markdown()
                 with gr.Row():
@@ -1019,13 +1071,16 @@ def app():
         ).then(
             run_review,
             [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order],
-            [auto_results_df, results_state, result_msg, results_df],
+            [auto_results_df, all_materials_df, results_state, result_msg, results_df],
         ).then(
             review_finished_ui,
             outputs=run_btn,
         )
         sort_by.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
         sort_order.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
+        export_potential_pdf_btn.click(export_potential_pdf_ui, results_state, export_potential_pdf_file)
+        export_all_pdf_btn.click(export_all_pdf_ui, results_state, export_all_pdf_file)
+        export_all_excel_btn.click(export_all_excel_ui, results_state, export_all_excel_file)
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)
         fb_btn.click(save_row_feedback, [results_state, fb_row, fb_type, fb_redaction, fb_notes], fb_msg)

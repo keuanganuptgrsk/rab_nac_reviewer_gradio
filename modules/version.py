@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.1"
-APP_RELEASE_TITLE = "Sortable NAC Finding Cards"
+APP_VERSION = "0.6.2"
+APP_RELEASE_TITLE = "Finding Sort and Export Pack"
 APP_RELEASE_NOTES = (
-    "Kartu temuan potensi NAC kini bisa diurutkan berdasarkan Row atau Confidence agar reviewer lebih cepat memprioritaskan analisa."
+    "Kontrol sort disederhanakan, tabel seluruh material RAB ditambahkan, dan export PDF/Excel tersedia untuk rangkuman serta seluruh material."
 )
 
 

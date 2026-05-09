@@ -56,3 +56,109 @@ def export_feedback_logs():
     path = EXPORT_DIR / f"feedback_log_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.xlsx"
     pd.DataFrame(db.get_feedback()).to_excel(path, index=False)
     return str(path)
+
+
+def export_potential_nac_pdf(results):
+    rows = _potential_rows(results)
+    path = _pdf_path("ringkasan_potensi_nac")
+    title = "Ringkasan Potensi NAC Perlu Review"
+    columns = ["row_id", "item_per_rab", "matched_category", "final_confidence", "confidence_label"]
+    headers = ["Row", "Nama Material", "Kategori NAC", "Confidence %", "Confidence Level"]
+    _write_pdf(path, title, rows, columns, headers)
+    return str(path)
+
+
+def export_all_materials_pdf(results):
+    rows = _all_material_rows(results)
+    path = _pdf_path("seluruh_material_rab")
+    title = "Tabel Seluruh Material RAB"
+    columns = ["row_id", "item_per_rab", "matched_category", "final_confidence", "confidence_label"]
+    headers = ["Row", "Nama Material", "Kategori NAC", "Confidence %", "Confidence Level"]
+    _write_pdf(path, title, rows, columns, headers)
+    return str(path)
+
+
+def export_all_materials_excel(results):
+    EXPORT_DIR.mkdir(exist_ok=True)
+    path = EXPORT_DIR / f"seluruh_material_rab_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    frame = pd.DataFrame(_all_material_rows(results))
+    columns = {
+        "row_id": "Row",
+        "item_per_rab": "Nama Material",
+        "matched_category": "Kategori NAC",
+        "final_confidence": "Confidence %",
+        "confidence_label": "Confidence Level",
+    }
+    frame = frame[list(columns)].rename(columns=columns) if not frame.empty else pd.DataFrame(columns=list(columns.values()))
+    frame.to_excel(path, index=False)
+    return str(path)
+
+
+def _potential_rows(results):
+    frame = pd.DataFrame(results or [])
+    if frame.empty:
+        return []
+    frame = frame[frame["confidence_label"].isin(["Sedang", "Tinggi", "Sangat tinggi"])].copy()
+    return _normalize_export_rows(frame)
+
+
+def _all_material_rows(results):
+    frame = pd.DataFrame(results or [])
+    if frame.empty:
+        return []
+    return _normalize_export_rows(frame)
+
+
+def _normalize_export_rows(frame):
+    frame = frame.copy()
+    for col in ["row_id", "item_per_rab", "matched_category", "final_confidence", "confidence_label"]:
+        if col not in frame.columns:
+            frame[col] = ""
+    frame["item_per_rab"] = frame["item_per_rab"].fillna(frame.get("item_description", ""))
+    frame["matched_category"] = frame["matched_category"].replace("", "-").fillna("-")
+    frame["final_confidence"] = pd.to_numeric(frame["final_confidence"], errors="coerce").fillna(0).round(2)
+    frame["_row_sort"] = pd.to_numeric(frame["row_id"], errors="coerce")
+    frame = frame.sort_values("_row_sort", na_position="last")
+    return frame.to_dict("records")
+
+
+def _pdf_path(prefix):
+    EXPORT_DIR.mkdir(exist_ok=True)
+    return EXPORT_DIR / f"{prefix}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.pdf"
+
+
+def _write_pdf(path, title, rows, columns, headers):
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    styles = getSampleStyleSheet()
+    doc = SimpleDocTemplate(str(path), pagesize=landscape(A4), leftMargin=24, rightMargin=24, topMargin=24, bottomMargin=24)
+    story = [Paragraph(title, styles["Title"]), Spacer(1, 12)]
+    data = [headers]
+    for row in rows:
+        data.append([_pdf_cell(row.get(col, "")) for col in columns])
+    if len(data) == 1:
+        data.append(["-", "Tidak ada data", "-", "-", "-"])
+    table = Table(data, colWidths=[45, 330, 130, 80, 120], repeatRows=1)
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1665D6")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#DBE7F7")),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FBFF")]),
+            ]
+        )
+    )
+    story.append(table)
+    doc.build(story)
+
+
+def _pdf_cell(value):
+    text = str(value if value is not None else "")
+    return text[:180]

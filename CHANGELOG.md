@@ -2,6 +2,14 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.2 - Finding Sort and Export Pack - 2026-05-09
+
+- Menyederhanakan arah sort menjadi `Tinggi ke rendah` dan `Rendah ke tinggi`.
+- Menambahkan tabel seluruh material RAB tanpa filter confidence.
+- Tabel seluruh material berisi Row, Nama Material, Kategori NAC, Confidence %, dan Kategori Confidence Level.
+- Menambahkan export PDF untuk rangkuman potensi NAC yang perlu direview.
+- Menambahkan export PDF dan Excel untuk tabel seluruh material RAB.
+
 ## v0.6.1 - Sortable NAC Finding Cards - 2026-05-09
 
 - Menambahkan kontrol sort untuk kartu temuan NAC.
