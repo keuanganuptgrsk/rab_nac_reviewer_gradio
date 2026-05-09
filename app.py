@@ -517,6 +517,115 @@ a {
     font-weight: 650;
 }
 
+.learning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+.learning-card {
+    border: 1px solid var(--rab-border);
+    border-radius: 8px;
+    padding: 16px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.learning-number {
+    font-size: 34px;
+    font-weight: 850;
+    color: var(--rab-accent);
+}
+
+.learning-label {
+    color: var(--rab-secondary);
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.learning-title {
+    color: var(--rab-primary);
+    font-size: 17px;
+    font-weight: 850;
+    margin-bottom: 10px;
+}
+
+.learning-copy {
+    color: var(--rab-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.learning-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.learning-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--rab-soft);
+    border: 1px solid var(--rab-border);
+    border-radius: 8px;
+}
+
+.learning-item {
+    color: var(--rab-primary);
+    font-weight: 750;
+}
+
+.learning-count {
+    background: var(--rab-accent);
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-weight: 850;
+    font-size: 12px;
+}
+
+.redaction-search {
+    border: 2px solid #b7dcf5;
+    box-shadow: 0 0 0 5px rgba(186, 230, 253, 0.55);
+    border-radius: 8px;
+    padding: 16px;
+    background: #ffffff;
+}
+
+.redaction-result {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-top: 16px;
+    padding: 18px;
+    border: 1px solid var(--rab-border);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+}
+
+.redaction-score {
+    color: var(--rab-accent);
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.redaction-title {
+    color: var(--rab-primary);
+    font-size: 18px;
+    font-weight: 850;
+}
+
+.redaction-copy {
+    color: var(--rab-secondary);
+    line-height: 1.5;
+    margin-top: 6px;
+}
+
 @media (max-width: 820px) {
     .finding-card {
         grid-template-columns: 58px 1fr;
@@ -973,21 +1082,38 @@ def _auto_aliases(keyword):
     return cleaned[:5]
 
 
-def add_keyword_simple_ui(keyword, category, severity, notes):
+def _infer_keyword_metadata(keyword):
+    text = str(keyword or "").lower()
+    rules = [
+        (["konsumsi", "makan", "minum", "snack", "jamuan", "catering"], "Rapat/Jamuan", "high", "Kandidat biaya konsumsi/jamuan; validasi konteks kegiatan dan aturan internal."),
+        (["hadiah", "souvenir", "doorprize", "oleh-oleh", "cinderamata"], "Pribadi/Hadiah", "high", "Kandidat biaya hadiah/cinderamata; perlu validasi allowability."),
+        (["pegawai", "tunjangan", "cuti", "fasilitas", "seragam"], "Pegawai", "high", "Kandidat biaya terkait pegawai; cek pemisahan komponen allowable/non-allowable."),
+        (["denda", "sanksi", "penalti"], "Denda/Sanksi", "high", "Kandidat denda/sanksi; biasanya perlu review khusus."),
+        (["honor", "narasumber", "fee", "uang saku", "pulsa"], "Personel/Operasional", "medium", "Kandidat biaya personel/operasional; validasi dasar pembayaran dan output kegiatan."),
+        (["transport", "perjalanan", "akomodasi"], "Transportasi/Personel", "medium", "Kandidat biaya perjalanan/transport; pastikan terkait langsung dengan pekerjaan teknis."),
+    ]
+    for tokens, category, severity, notes in rules:
+        if any(token in text for token in tokens):
+            return category, severity, notes
+    return "Umum", "medium", "Keyword ditambahkan dari UI sederhana; wajib validasi PMK/kebijakan internal."
+
+
+def add_keyword_simple_ui(keyword):
     keyword = str(keyword or "").strip()
     if not keyword:
         return "Isi nama keyword NAC terlebih dahulu.", render_keyword_cards("")
     existing = db.get_keyword_by_text(keyword)
     if existing:
         return f"Keyword '{keyword}' sudah ada.", render_keyword_cards(keyword)
+    category, severity, notes = _infer_keyword_metadata(keyword)
     keyword_id = db.add_keyword(
-        category or "Umum",
+        category,
         keyword,
-        f"Keyword ditambahkan dari UI sederhana; wajib validasi PMK/internal.",
+        notes,
         "USER",
-        severity or "medium",
+        severity,
         "active",
-        notes or "",
+        "Metadata kategori/confidence dasar dipilih otomatis oleh sistem.",
     )
     aliases = _auto_aliases(keyword)
     for alias in aliases:
@@ -1098,7 +1224,94 @@ def export_keywords_ui():
 
 
 def learning_ui():
-    return learning_summary()
+    fp, fn, new_kw, syn, model_syn, exc, fb_hist = learning_summary()
+    return render_learning_dashboard(fp, fn, new_kw, syn, model_syn, exc, fb_hist)
+
+
+def _top_rows(frame, title, empty_text):
+    if frame is None or frame.empty:
+        return (
+            "<div class='learning-card'>"
+            f"<div class='learning-title'>{html.escape(title)}</div>"
+            f"<div class='learning-copy'>{html.escape(empty_text)}</div>"
+            "</div>"
+        )
+    rows_html = ""
+    for _, row in frame.head(5).iterrows():
+        item = row.get("item") or row.get("suggested_synonym") or row.get("matched_keyword") or "-"
+        count = row.get("count", 0)
+        rows_html += (
+            "<div class='learning-row'>"
+            f"<div class='learning-item'>{html.escape(str(item))}</div>"
+            f"<div class='learning-count'>{html.escape(str(count))}</div>"
+            "</div>"
+        )
+    return (
+        "<div class='learning-card'>"
+        f"<div class='learning-title'>{html.escape(title)}</div>"
+        f"<div class='learning-list'>{rows_html}</div>"
+        "</div>"
+    )
+
+
+def render_learning_dashboard(fp, fn, new_kw, syn, model_syn, exc, fb_hist):
+    feedback_count = 0 if fb_hist is None or fb_hist.empty else len(fb_hist)
+    fp_count = 0 if fp is None or fp.empty else int(fp["count"].sum())
+    fn_count = 0 if fn is None or fn.empty else int(fn["count"].sum())
+    syn_count = 0 if syn is None or syn.empty else int(syn["count"].sum())
+    return (
+        "<div class='keyword-workspace'>"
+        "<div class='learning-grid'>"
+        f"<div class='learning-card'><div class='learning-number'>{feedback_count}</div><div class='learning-label'>Total feedback reviewer</div></div>"
+        f"<div class='learning-card'><div class='learning-number'>{fp_count}</div><div class='learning-label'>False positive perlu exception</div></div>"
+        f"<div class='learning-card'><div class='learning-number'>{fn_count}</div><div class='learning-label'>False negative perlu keyword</div></div>"
+        f"<div class='learning-card'><div class='learning-number'>{syn_count}</div><div class='learning-label'>Sinonim disarankan</div></div>"
+        "</div>"
+        "<div class='learning-grid'>"
+        + _top_rows(fp, "Paling sering ditandai Bukan NAC", "Belum ada feedback false positive.")
+        + _top_rows(fn, "Paling sering dikoreksi sebagai NAC", "Belum ada feedback false negative.")
+        + _top_rows(new_kw, "Kandidat keyword baru", "Belum ada usulan keyword baru.")
+        + _top_rows(syn, "Kandidat sinonim", "Belum ada usulan sinonim.")
+        + _top_rows(exc, "Kandidat exception", "Belum ada pola exception.")
+        + "</div>"
+        "<div class='simple-note'>Dashboard ini memakai feedback reviewer untuk membantu menyarankan keyword, sinonim, dan exception. Tidak ada retraining otomatis atau keputusan final.</div>"
+        "</div>"
+    )
+
+
+def analyze_redaction_ui(text):
+    text = str(text or "").strip()
+    if not text:
+        return "<div class='empty-findings'>Ketik satu kalimat redaksi RAB untuk dianalisa.</div>"
+    result = detect_items(
+        [
+            {
+                "row_id": "redaksi",
+                "source_file": "input_manual",
+                "page_or_sheet": "Analisa Redaksi",
+                "original_text": text,
+                "item_description": text,
+                "item_per_rab": text,
+            }
+        ],
+        db.get_settings(),
+    )[0]
+    score = float(result.get("final_confidence", 0) or 0)
+    label = result.get("confidence_label", "-")
+    category = result.get("matched_category") or "Tidak ada kategori kuat"
+    keyword = result.get("matched_keyword") or "-"
+    suggestion = result.get("redaction_suggestion") or "Tidak ada saran khusus."
+    explanation = result.get("explanation") or ""
+    return (
+        "<div class='redaction-result'>"
+        f"<div><div class='redaction-score'>{score:.0f}%</div><span class='confidence-pill level-{_level_class(label)}'>{html.escape(label)}</span></div>"
+        "<div>"
+        f"<div class='redaction-title'>Potensi NAC: {html.escape(category)} | Keyword: {html.escape(keyword)}</div>"
+        f"<div class='redaction-copy'>{html.escape(explanation)}</div>"
+        f"<div class='redaction-copy'><strong>Saran klarifikasi:</strong> {html.escape(suggestion)}</div>"
+        "</div>"
+        "</div>"
+    )
 
 
 def export_review_ui(results):
@@ -1148,6 +1361,26 @@ def save_settings_ui(model, enable_semantic, enable_stemming, fuzzy, semantic, e
     for k, v in values.items():
         db.save_setting(k, v)
     return "Settings tersimpan."
+
+
+def save_simple_settings_ui(review_mode, semantic_mode, ocr_mode):
+    sensitivity = {
+        "Ketat": {"fuzzy_threshold": "86", "semantic_threshold": "72"},
+        "Seimbang": {"fuzzy_threshold": "78", "semantic_threshold": "60"},
+        "Lebih sensitif": {"fuzzy_threshold": "68", "semantic_threshold": "52"},
+    }.get(review_mode, {"fuzzy_threshold": "78", "semantic_threshold": "60"})
+    semantic_enabled = "true" if semantic_mode == "Aktif" else "false"
+    values = {
+        "enable_semantic": semantic_enabled,
+        "enable_stemming": "false",
+        "fuzzy_threshold": sensitivity["fuzzy_threshold"],
+        "semantic_threshold": sensitivity["semantic_threshold"],
+        "ocr_mode": ocr_mode,
+        "semantic_user_configured": "true",
+    }
+    for key, value in values.items():
+        db.save_setting(key, value)
+    return f"Settings tersimpan: mode review {review_mode}, semantic {semantic_mode}, OCR {ocr_mode}."
 
 
 def reset_db_ui():
@@ -1211,100 +1444,50 @@ def app():
                     export_all_pdf_file = gr.File(label="PDF Seluruh Material RAB")
                     export_all_excel_file = gr.File(label="Excel Seluruh Material RAB")
                 all_materials_df = gr.Dataframe(label="Tabel Seluruh Material RAB", visible=False)
-            with gr.Tab("Review Hasil"):
-                result_msg = gr.Markdown()
-                with gr.Row():
-                    label_filter = gr.Dropdown(["Semua", "Sangat rendah", "Rendah", "Sedang", "Tinggi", "Sangat tinggi"], value="Semua", label="Confidence")
-                    category_filter = gr.Textbox(label="Kategori")
-                    match_filter = gr.Dropdown(["Semua", "exact", "synonym", "fuzzy", "semantic", "none"], value="Semua", label="Match Type")
-                    keyword_filter = gr.Textbox(label="Keyword")
-                with gr.Row():
-                    medium_high = gr.Checkbox(value=True, label="Show only medium to very high confidence")
-                    manual_only = gr.Checkbox(label="Show only manual review items")
-                results_df = gr.Dataframe(label="Review Hasil", interactive=True)
-                with gr.Row():
-                    fb_row = gr.Textbox(label="row_id")
-                    fb_type = gr.Dropdown(["Correct NAC", "Not NAC", "Manual Review", "Confidence Too High", "Confidence Too Low", "Add as New NAC Keyword", "Add as Synonym", "Add Exception"], label="Feedback")
-                fb_redaction = gr.Textbox(label="User Suggested Redaction / Saran Redaksi/Klarifikasi")
-                fb_notes = gr.Textbox(label="Reviewer Notes")
-                fb_btn = gr.Button("Simpan Feedback")
-                fb_msg = gr.Markdown()
-                gr.Markdown("### Suggested Synonyms dari Model HF\nKandidat ini berasal dari semantic/fuzzy match dan harus divalidasi reviewer sebelum masuk database.")
-                with gr.Row():
-                    syn_row = gr.Textbox(label="row_id kandidat sinonim")
-                    syn_approve_weight = gr.Number(value=0.85, label="Synonym weight")
-                    approve_syn_btn = gr.Button("Approve Suggested Synonym")
-                approve_syn_msg = gr.Markdown()
+                result_msg = gr.Markdown(visible=False)
+                results_df = gr.Dataframe(label="Review Hasil", visible=False)
+            with gr.Tab("Analisa Redaksi NAC"):
+                gr.Markdown("Ketik satu kalimat redaksi RAB. Sistem akan menghitung potensi NAC sebagai bantuan awal review internal.")
+                with gr.Group(elem_classes=["redaction-search"]):
+                    redaction_text = gr.Textbox(
+                        label="Analisa Redaksi NAC",
+                        placeholder="Contoh: biaya konsumsi rapat koordinasi",
+                        lines=2,
+                    )
+                    redaction_btn = gr.Button("Analisa Redaksi", variant="primary")
+                redaction_result = gr.HTML(value=analyze_redaction_ui(""))
             with gr.Tab("Database NAC"):
                 gr.Markdown("Kelola keyword NAC dengan cara sederhana. Seed database bersifat demo dan wajib divalidasi dengan PMK/kebijakan internal.")
-                keyword_search = gr.Textbox(label="Cari keyword NAC", placeholder="Contoh: konsumsi, honorarium, transport, hadiah")
-                keyword_cards = gr.HTML(value=render_keyword_cards(""))
-                with gr.Accordion("Tambah keyword NAC", open=False):
+                with gr.Accordion("Tambah keyword NAC", open=True):
                     simple_kw = gr.Textbox(label="Keyword NAC", placeholder="Contoh: uang saku, honorarium, biaya representasi")
-                    with gr.Row():
-                        simple_cat = gr.Textbox(label="Kategori", value="Umum")
-                        simple_sev = gr.Dropdown(["very_low", "low", "medium", "high", "very_high"], value="medium", label="Confidence dasar")
-                    simple_notes = gr.Textbox(label="Catatan validasi", placeholder="Opsional: dasar internal/PMK, konteks, atau catatan reviewer")
                     simple_add_btn = gr.Button("Tambah Keyword NAC", variant="primary")
+                    gr.Markdown("Kategori, confidence dasar, catatan, dan kandidat sinonim/parafrasa akan dipilih otomatis oleh sistem.")
                 with gr.Accordion("Upload Excel keyword NAC", open=False):
-                    gr.Markdown("Kolom minimal: `category` dan `keyword`. Opsional: `synonyms`, `description`, `reference`, `severity`, `status`, `notes`. Sinonim dipisahkan dengan titik koma.")
+                    gr.Markdown("Kolom minimal: `category` dan `keyword`. Jika hanya punya daftar keyword, buat satu kolom bernama `keyword`.")
                     import_file = gr.File(label="Upload Excel Keyword NAC", file_types=[".xlsx"])
                     import_btn = gr.Button("Import Keyword dari Excel")
                     export_kw_btn = gr.Button("Export Database Keyword")
                     export_kw_file = gr.File(label="Download Keyword DB")
                 kw_msg = gr.Markdown()
+                keyword_search = gr.Textbox(label="Cari keyword NAC", placeholder="Contoh: konsumsi, honorarium, transport, hadiah")
+                keyword_cards = gr.HTML(value=render_keyword_cards(""))
             with gr.Tab("Feedback & Learning"):
-                learn_btn = gr.Button("Refresh Learning Dashboard")
-                fp = gr.Dataframe(label="Most Common False Positives")
-                fn = gr.Dataframe(label="Most Common False Negatives")
-                sug_kw = gr.Dataframe(label="Frequently Suggested New NAC Keywords")
-                sug_syn = gr.Dataframe(label="Frequently Suggested Synonyms")
-                model_syn = gr.Dataframe(label="Model-Suggested Synonyms Approved by Reviewer")
-                sug_exc = gr.Dataframe(label="Suggested Exceptions")
-                fb_hist = gr.Dataframe(label="Feedback History")
-            with gr.Tab("Export Excel"):
-                export_btn = gr.Button("Export Excel")
-                export_file = gr.File(label="Export Excel")
-                export_fb_btn = gr.Button("Export feedback logs")
-                export_fb_file = gr.File(label="Feedback Excel")
-                backup_btn = gr.Button("Export SQLite database backup")
-                backup_file = gr.File(label="SQLite Backup")
-                restore_file = gr.File(label="Import SQLite database backup", file_types=[".db"])
-                restore_btn = gr.Button("Restore Backup")
-                restore_msg = gr.Markdown()
+                learn_btn = gr.Button("Refresh Learning Dashboard", variant="primary")
+                learning_html = gr.HTML(value=learning_ui())
             with gr.Tab("Settings"):
-                model = gr.Dropdown(
-                    [
-                        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-                        "intfloat/multilingual-e5-small",
-                        "intfloat/multilingual-e5-base",
-                        "firqaaa/indo-sentence-bert-base",
-                        "firqaaa/indo-sentence-bert-large",
-                    ],
-                    value=settings.get("embedding_model"),
-                    label="Embedding model name",
-                    allow_custom_value=True,
-                )
-                enable_sem = gr.Checkbox(value=settings.get("enable_semantic", "false") == "true", label="Enable semantic matching")
-                enable_stem = gr.Checkbox(value=settings.get("enable_stemming", "false") == "true", label="Enable stemming")
-                with gr.Row():
-                    fuzzy_thr = gr.Number(value=float(settings.get("fuzzy_threshold", 78)), label="Fuzzy threshold")
-                    semantic_thr = gr.Number(value=float(settings.get("semantic_threshold", 60)), label="Semantic threshold")
-                    ocr_mode = gr.Radio(["auto", "disabled", "easyocr", "paddleocr", "tesseract"], value=settings.get("ocr_mode", "auto"), label="OCR mode")
-                with gr.Row():
-                    exact_w = gr.Number(value=float(settings.get("exact_weight", 0.25)), label="Exact match weight")
-                    syn_w = gr.Number(value=float(settings.get("synonym_weight", 0.25)), label="Synonym match weight")
-                    fuzzy_w = gr.Number(value=float(settings.get("fuzzy_weight", 0.20)), label="Fuzzy match weight")
-                    sem_w = gr.Number(value=float(settings.get("semantic_weight", 0.30)), label="Semantic match weight")
-                with gr.Row():
-                    sev_w = gr.Number(value=float(settings.get("severity_weight", 0.10)), label="Severity weight")
-                    feedback_w = gr.Number(value=float(settings.get("feedback_weight", 0.10)), label="Feedback adjustment weight")
-                    allowable_w = gr.Number(value=float(settings.get("allowable_penalty_weight", 0.20)), label="Allowable competitor penalty weight")
-                save_set = gr.Button("Save Settings")
+                gr.Markdown("Pengaturan dibuat sederhana untuk reviewer finance. Mode default `Seimbang` direkomendasikan.")
+                review_mode = gr.Radio(["Ketat", "Seimbang", "Lebih sensitif"], value="Seimbang", label="Mode Review")
+                semantic_mode = gr.Radio(["Nonaktif", "Aktif"], value="Aktif" if settings.get("enable_semantic", "false") == "true" else "Nonaktif", label="Deteksi Sinonim/Parafrasa Otomatis")
+                ocr_mode = gr.Radio(["auto", "disabled"], value="auto" if settings.get("ocr_mode", "auto") != "disabled" else "disabled", label="OCR PDF Scan/Gambar")
+                save_set = gr.Button("Simpan Settings", variant="primary")
+                with gr.Accordion("Backup data", open=False):
+                    backup_btn = gr.Button("Export SQLite database backup")
+                    backup_file = gr.File(label="SQLite Backup")
+                    restore_file = gr.File(label="Import SQLite database backup", file_types=[".db"])
+                    restore_btn = gr.Button("Restore Backup")
+                    restore_msg = gr.Markdown()
                 reset_db = gr.Button("Reset demo database")
                 settings_msg = gr.Markdown()
-                rebuild_btn = gr.Button("Rebuild embeddings")
-                rebuild_msg = gr.Markdown("Embeddings dibangun lazy saat review; tombol ini hanya penanda refresh cache pada versi demo.")
                 gr.Markdown(
                     "### Versioning\n"
                     f"{version_banner()}\n\n"
@@ -1334,20 +1517,17 @@ def app():
         export_potential_pdf_btn.click(export_potential_pdf_ui, results_state, export_potential_pdf_file)
         export_all_pdf_btn.click(export_all_pdf_ui, results_state, export_all_pdf_file)
         export_all_excel_btn.click(export_all_excel_ui, results_state, export_all_excel_file)
-        for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
-            control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)
-        fb_btn.click(save_row_feedback, [results_state, fb_row, fb_type, fb_redaction, fb_notes], fb_msg)
-        approve_syn_btn.click(approve_suggested_synonym, [results_state, syn_row, syn_approve_weight], [approve_syn_msg, keyword_cards])
+        redaction_btn.click(analyze_redaction_ui, redaction_text, redaction_result)
+        redaction_text.submit(analyze_redaction_ui, redaction_text, redaction_result)
+        redaction_text.change(analyze_redaction_ui, redaction_text, redaction_result)
         keyword_search.change(render_keyword_cards, keyword_search, keyword_cards)
-        simple_add_btn.click(add_keyword_simple_ui, [simple_kw, simple_cat, simple_sev, simple_notes], [kw_msg, keyword_cards])
+        simple_add_btn.click(add_keyword_simple_ui, simple_kw, [kw_msg, keyword_cards])
         import_btn.click(import_keywords_simple_ui, import_file, [kw_msg, keyword_cards])
         export_kw_btn.click(export_keywords_ui, outputs=export_kw_file)
-        learn_btn.click(learning_ui, outputs=[fp, fn, sug_kw, sug_syn, model_syn, sug_exc, fb_hist])
-        export_btn.click(export_review_ui, results_state, export_file)
-        export_fb_btn.click(export_feedback_logs, outputs=export_fb_file)
+        learn_btn.click(learning_ui, outputs=learning_html)
         backup_btn.click(backup_ui, outputs=backup_file)
         restore_btn.click(restore_ui, restore_file, restore_msg)
-        save_set.click(save_settings_ui, [model, enable_sem, enable_stem, fuzzy_thr, semantic_thr, exact_w, syn_w, fuzzy_w, sem_w, sev_w, feedback_w, allowable_w, ocr_mode], settings_msg)
+        save_set.click(save_simple_settings_ui, [review_mode, semantic_mode, ocr_mode], settings_msg)
         reset_db.click(reset_db_ui, outputs=settings_msg)
     return demo
 

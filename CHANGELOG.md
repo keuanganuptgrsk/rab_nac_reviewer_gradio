@@ -2,6 +2,15 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.5 - Finance Friendly Review Flow - 2026-05-09
+
+- Menghapus tab `Review Hasil` dan `Export Excel` dari navigasi utama.
+- Menambahkan tab `Analisa Redaksi NAC` untuk mengecek satu kalimat redaksi seperti search box.
+- Memindahkan tambah keyword dan upload Excel keyword ke bagian atas tab `Database NAC`.
+- Menyederhanakan tambah keyword agar user cukup mengisi keyword, sementara kategori, confidence dasar, catatan, dan kandidat sinonim dipilih otomatis.
+- Menyederhanakan tab `Settings` menjadi mode review, semantic/parafrasa otomatis, OCR, backup, dan reset demo database.
+- Mengubah `Feedback & Learning` menjadi dashboard kartu interaktif.
+
 ## v0.6.4 - Simple NAC Keyword Cards - 2026-05-09
 
 - Menyederhanakan tab `Database NAC` untuk user pemula.
