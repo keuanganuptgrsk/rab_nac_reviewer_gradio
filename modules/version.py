@@ -1,7 +1,7 @@
-APP_VERSION = "0.5.6"
-APP_RELEASE_TITLE = "Responsive Review Button"
+APP_VERSION = "0.6.0"
+APP_RELEASE_TITLE = "Interactive NAC Finding Cards"
 APP_RELEASE_NOTES = (
-    "Tombol Run NAC Review sekarang langsung menampilkan status proses, sementara semantic matching dimatikan secara default agar review lebih cepat di hosting gratis."
+    "Temuan potensi NAC kini ditampilkan sebagai kartu interaktif, bukan tabel, dengan fokus pada Row, Item RAB, Confidence, dan Confidence Level."
 )
 
 

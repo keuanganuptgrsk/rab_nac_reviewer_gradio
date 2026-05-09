@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.0 - Interactive NAC Finding Cards - 2026-05-09
+
+- Mengganti tampilan hasil review utama dari tabel menjadi kartu interaktif.
+- Kartu temuan hanya menampilkan informasi inti: Row, Item RAB, Confidence, dan Confidence Level.
+- Menambahkan warna berbeda untuk confidence `Sedang`, `Tinggi`, dan `Sangat tinggi`.
+- Mengoptimalkan tampilan untuk asumsi satu Excel per analisa agar hasil lebih mudah discan.
+
 ## v0.5.6 - Responsive Review Button - 2026-05-09
 
 - Menambahkan status proses langsung setelah tombol `Run NAC Review` ditekan.

@@ -1,4 +1,5 @@
 import os
+import html
 from pathlib import Path
 
 import gradio as gr
@@ -203,6 +204,155 @@ a {
 .markdown-code, code {
     border-radius: 6px !important;
 }
+
+.findings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.findings-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--rab-border);
+    background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+    border-radius: 8px;
+}
+
+.findings-summary strong {
+    color: var(--rab-primary);
+    font-size: 18px;
+}
+
+.findings-summary span {
+    color: var(--rab-secondary);
+    font-size: 14px;
+}
+
+.finding-card {
+    display: grid;
+    grid-template-columns: 80px minmax(240px, 1fr) 130px 160px;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--rab-border);
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.finding-card:hover {
+    border-color: rgba(22, 101, 214, 0.45);
+    box-shadow: 0 18px 42px rgba(22, 101, 214, 0.10);
+}
+
+.finding-row {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--rab-accent-soft);
+    color: var(--rab-accent);
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.finding-item {
+    color: var(--rab-primary);
+    font-weight: 750;
+    font-size: 17px;
+    line-height: 1.35;
+}
+
+.finding-meta {
+    color: var(--rab-muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.confidence-score {
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--rab-primary);
+}
+
+.confidence-bar {
+    height: 8px;
+    width: 100%;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 7px;
+}
+
+.confidence-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.confidence-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    border-radius: 999px;
+    padding: 9px 13px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.level-sedang {
+    color: #92400e;
+    background: #fef3c7;
+}
+
+.level-tinggi {
+    color: #9a3412;
+    background: #ffedd5;
+}
+
+.level-sangat-tinggi {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.fill-sedang {
+    background: #f59e0b;
+}
+
+.fill-tinggi {
+    background: #f97316;
+}
+
+.fill-sangat-tinggi {
+    background: #dc2626;
+}
+
+.empty-findings {
+    padding: 22px;
+    border: 1px solid var(--rab-border);
+    background: #ffffff;
+    border-radius: 8px;
+    color: var(--rab-secondary);
+    font-weight: 650;
+}
+
+@media (max-width: 820px) {
+    .finding-card {
+        grid-template-columns: 58px 1fr;
+    }
+
+    .finding-card > div:nth-child(3),
+    .finding-card > div:nth-child(4) {
+        grid-column: 2;
+    }
+}
 """
 
 
@@ -320,11 +470,11 @@ def _chunk_text(text, max_len=900):
 def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col):
     items, msg = build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col)
     if not items:
-        return gr.update(value=pd.DataFrame(), visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
+        return gr.update(value="", visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
     results = detect_items(items, db.get_settings())
     summary = review_summary_dataframe(results)
     return (
-        gr.update(value=summary, visible=True),
+        gr.update(value=render_findings_cards(results), visible=True),
         results,
         f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
         gr.update(value=summary, visible=True),
@@ -391,6 +541,62 @@ def review_summary_dataframe(results):
             "redaction_suggestion": "Sugesti Perubahan Redaksi",
         }
     )
+
+
+def render_findings_cards(results):
+    frame = pd.DataFrame(results or [])
+    if frame.empty:
+        return _empty_findings("Belum ada hasil review. Upload RAB lalu tekan Run NAC Review.")
+    frame = frame[frame["confidence_label"].isin(["Sedang", "Tinggi", "Sangat tinggi"])].copy()
+    if frame.empty:
+        return _empty_findings("Tidak ada item dengan confidence Sedang hingga Sangat tinggi.")
+    frame = frame.sort_values(["final_confidence", "row_id"], ascending=[False, True])
+    cards = [
+        "<div class='findings-panel'>",
+        "<div class='findings-summary'>"
+        f"<strong>{len(frame)} potensi NAC perlu review</strong>"
+        "<span>Ditampilkan sebagai kartu agar mudah discan. Fokus: Row, Item RAB, Confidence, dan Confidence Level.</span>"
+        "</div>",
+    ]
+    for _, row in frame.iterrows():
+        score = _safe_float(row.get("final_confidence", 0))
+        label = str(row.get("confidence_label", "Sedang"))
+        level_class = _level_class(label)
+        item = html.escape(str(row.get("item_per_rab") or row.get("item_description") or row.get("original_text") or "-"))
+        row_id = html.escape(str(row.get("row_id") or "-"))
+        keyword = html.escape(str(row.get("matched_keyword") or "-"))
+        category = html.escape(str(row.get("matched_category") or "-"))
+        cards.append(
+            "<div class='finding-card'>"
+            f"<div><div class='finding-row'>{row_id}</div></div>"
+            f"<div><div class='finding-item'>{item}</div><div class='finding-meta'>{category} | {keyword}</div></div>"
+            f"<div><div class='confidence-score'>{score:.0f}%</div>"
+            f"<div class='confidence-bar'><div class='confidence-fill fill-{level_class}' style='width:{min(max(score, 0), 100):.0f}%'></div></div></div>"
+            f"<div><span class='confidence-pill level-{level_class}'>{html.escape(label)}</span></div>"
+            "</div>"
+        )
+    cards.append("</div>")
+    return "".join(cards)
+
+
+def _empty_findings(message):
+    return f"<div class='empty-findings'>{html.escape(message)}</div>"
+
+
+def _safe_float(value):
+    try:
+        return float(value)
+    except Exception:
+        return 0.0
+
+
+def _level_class(label):
+    normalized = str(label).lower().replace(" ", "-")
+    if normalized == "sangat-tinggi":
+        return "sangat-tinggi"
+    if normalized == "tinggi":
+        return "tinggi"
+    return "sedang"
 
 
 def filter_results(results, label, category, match_type, keyword, medium_high, manual_only):
@@ -627,7 +833,7 @@ def app():
                 total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
                 run_status = gr.Markdown(visible=False)
-                auto_results_df = gr.Dataframe(label="Hasil Review - Confidence Sedang hingga Sangat Tinggi", visible=False)
+                auto_results_df = gr.HTML(visible=False)
             with gr.Tab("Review Hasil"):
                 result_msg = gr.Markdown()
                 with gr.Row():
