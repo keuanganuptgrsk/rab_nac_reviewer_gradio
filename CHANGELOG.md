@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.1 - Sortable NAC Finding Cards - 2026-05-09
+
+- Menambahkan kontrol sort untuk kartu temuan NAC.
+- Reviewer dapat mengurutkan berdasarkan `Row` atau `Confidence`.
+- Kartu hasil akan di-render ulang tanpa menjalankan ulang review.
+
 ## v0.6.0 - Interactive NAC Finding Cards - 2026-05-09
 
 - Mengganti tampilan hasil review utama dari tabel menjadi kartu interaktif.

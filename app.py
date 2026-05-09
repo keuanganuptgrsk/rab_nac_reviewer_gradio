@@ -212,7 +212,7 @@ a {
     margin-top: 14px;
 }
 
-.findings-summary {
+.findings-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -223,14 +223,25 @@ a {
     border-radius: 8px;
 }
 
-.findings-summary strong {
+.findings-summary-copy strong {
     color: var(--rab-primary);
     font-size: 18px;
 }
 
-.findings-summary span {
+.findings-summary-copy span {
     color: var(--rab-secondary);
     font-size: 14px;
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-controls label {
+    color: var(--rab-secondary) !important;
+    font-size: 13px;
 }
 
 .finding-card {
@@ -467,14 +478,14 @@ def _chunk_text(text, max_len=900):
     return chunks or ([text] if text else [])
 
 
-def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col):
+def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order):
     items, msg = build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col)
     if not items:
         return gr.update(value="", visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
     results = detect_items(items, db.get_settings())
     summary = review_summary_dataframe(results)
     return (
-        gr.update(value=render_findings_cards(results), visible=True),
+        gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
         results,
         f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
         gr.update(value=summary, visible=True),
@@ -543,19 +554,32 @@ def review_summary_dataframe(results):
     )
 
 
-def render_findings_cards(results):
+def render_sorted_findings(results, sort_by, sort_order):
+    return gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=bool(results))
+
+
+def render_findings_cards(results, sort_by="Confidence", sort_order="Tinggi ke rendah"):
     frame = pd.DataFrame(results or [])
     if frame.empty:
         return _empty_findings("Belum ada hasil review. Upload RAB lalu tekan Run NAC Review.")
     frame = frame[frame["confidence_label"].isin(["Sedang", "Tinggi", "Sangat tinggi"])].copy()
     if frame.empty:
         return _empty_findings("Tidak ada item dengan confidence Sedang hingga Sangat tinggi.")
-    frame = frame.sort_values(["final_confidence", "row_id"], ascending=[False, True])
+    frame["_row_sort"] = frame["row_id"].apply(_row_sort_key)
+    if sort_by == "Row":
+        ascending = sort_order != "Besar ke kecil"
+        frame = frame.sort_values(["_row_sort", "final_confidence"], ascending=[ascending, False])
+    else:
+        ascending = sort_order == "Rendah ke tinggi"
+        frame = frame.sort_values(["final_confidence", "_row_sort"], ascending=[ascending, True])
     cards = [
         "<div class='findings-panel'>",
-        "<div class='findings-summary'>"
-        f"<strong>{len(frame)} potensi NAC perlu review</strong>"
-        "<span>Ditampilkan sebagai kartu agar mudah discan. Fokus: Row, Item RAB, Confidence, dan Confidence Level.</span>"
+        "<div class='findings-toolbar'>"
+        "<div class='findings-summary-copy'>"
+        f"<strong>{len(frame)} potensi NAC perlu review</strong><br>"
+        "<span>Fokus: Row, Item RAB, Confidence, dan Confidence Level.</span>"
+        "</div>"
+        "<div class='sort-controls'><label>Gunakan kontrol sort di atas untuk mengurutkan temuan.</label></div>"
         "</div>",
     ]
     for _, row in frame.iterrows():
@@ -597,6 +621,13 @@ def _level_class(label):
     if normalized == "tinggi":
         return "tinggi"
     return "sedang"
+
+
+def _row_sort_key(value):
+    try:
+        return float(str(value).split(".")[0])
+    except Exception:
+        return 999999
 
 
 def filter_results(results, label, category, match_type, keyword, medium_high, manual_only):
@@ -833,6 +864,9 @@ def app():
                 total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
                 run_status = gr.Markdown(visible=False)
+                with gr.Row():
+                    sort_by = gr.Radio(["Confidence", "Row"], value="Confidence", label="Urutkan berdasarkan")
+                    sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi", "Kecil ke besar", "Besar ke kecil"], value="Tinggi ke rendah", label="Arah urutan")
                 auto_results_df = gr.HTML(visible=False)
             with gr.Tab("Review Hasil"):
                 result_msg = gr.Markdown()
@@ -984,12 +1018,14 @@ def app():
             queue=False,
         ).then(
             run_review,
-            [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col],
+            [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order],
             [auto_results_df, results_state, result_msg, results_df],
         ).then(
             review_finished_ui,
             outputs=run_btn,
         )
+        sort_by.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
+        sort_order.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)
         fb_btn.click(save_row_feedback, [results_state, fb_row, fb_type, fb_redaction, fb_notes], fb_msg)

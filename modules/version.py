@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.0"
-APP_RELEASE_TITLE = "Interactive NAC Finding Cards"
+APP_VERSION = "0.6.1"
+APP_RELEASE_TITLE = "Sortable NAC Finding Cards"
 APP_RELEASE_NOTES = (
-    "Temuan potensi NAC kini ditampilkan sebagai kartu interaktif, bukan tabel, dengan fokus pada Row, Item RAB, Confidence, dan Confidence Level."
+    "Kartu temuan potensi NAC kini bisa diurutkan berdasarkan Row atau Confidence agar reviewer lebih cepat memprioritaskan analisa."
 )
 
 
