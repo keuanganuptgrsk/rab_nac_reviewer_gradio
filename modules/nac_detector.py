@@ -37,7 +37,9 @@ def _allowable_score(norm_text, allowable_rows):
     best_kw = ""
     for row in allowable_rows:
         kw = normalize_text(row.get("keyword", ""))
-        score = 100 if kw and kw in norm_text else fuzz.partial_ratio(kw, norm_text)
+        score = 100 if kw and kw in norm_text else fuzz.token_set_ratio(kw, norm_text)
+        if score < 88:
+            score = 0
         if score > best:
             best, best_kw = score, row.get("keyword", "")
     return float(best), best_kw
@@ -168,6 +170,9 @@ def detect_item(item, settings=None):
         "original_text": original,
         "normalized_text": norm,
         "item_description": item.get("item_description", original),
+        "judul_rab": item.get("judul_rab", ""),
+        "section": item.get("section", ""),
+        "item_per_rab": item.get("item_per_rab", item.get("item_description", original)),
         "volume": item.get("volume", ""),
         "unit": item.get("unit", ""),
         "unit_price": item.get("unit_price", ""),

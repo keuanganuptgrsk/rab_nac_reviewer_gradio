@@ -5,7 +5,7 @@ import gradio as gr
 import pandas as pd
 
 from modules import db
-from modules.excel_loader import combine_selected_text_columns, detect_columns, load_excel_or_csv, normalize_dataframe
+from modules.excel_loader import combine_selected_text_columns, detect_columns, load_excel_or_csv, load_rab_excel_items, normalize_dataframe
 from modules.export_engine import export_feedback_logs, export_review_excel
 from modules.feedback_engine import learning_summary
 from modules.keyword_manager import export_keyword_database, import_keywords_from_excel
@@ -33,11 +33,16 @@ def handle_upload(file_obj):
     path = Path(_file_path(file_obj))
     suffix = path.suffix.lower()
     if suffix in [".xlsx", ".xls", ".csv"]:
-        loaded = load_excel_or_csv(path)
-        frame = normalize_dataframe(loaded["dataframe"])
+        rab_items = load_rab_excel_items(path) if suffix in [".xlsx", ".xls"] else None
+        if rab_items is not None and not rab_items.empty:
+            frame = normalize_dataframe(rab_items)
+            loaded = {"sheet": "RAB/REALISASI", "warning": "Format RAB terdeteksi. Review otomatis menggunakan Judul dan Item per RAB."}
+        else:
+            loaded = load_excel_or_csv(path)
+            frame = normalize_dataframe(loaded["dataframe"])
         detected = detect_columns(frame)
         cols = list(frame.columns)
-        text_defaults = [c for k, c in detected.items() if k in ("work_title", "description", "material_service_name", "notes")]
+        text_defaults = ["review_text"] if "review_text" in cols else [c for k, c in detected.items() if k in ("work_title", "description", "material_service_name", "notes")]
         text_defaults = text_defaults or cols[:1]
         preview = frame.head(30)
         state = {"kind": "table", "path": str(path), "sheet": loaded["sheet"], "data": frame.to_dict("records"), "columns": cols, "detected": detected}
@@ -84,11 +89,14 @@ def build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col
         for idx, text in combined.items():
             row = frame.loc[idx]
             items.append({
-                "row_id": str(idx + 1),
+                "row_id": str(row.get("row_id", idx + 1)),
                 "source_file": path.name,
-                "page_or_sheet": upload_state.get("sheet", ""),
+                "page_or_sheet": row.get("sheet", upload_state.get("sheet", "")),
                 "original_text": text,
                 "item_description": text,
+                "judul_rab": row.get("judul_rab", ""),
+                "item_per_rab": row.get("item_per_rab", text),
+                "section": row.get("section", ""),
                 "volume": row.get(volume_col, "") if volume_col else "",
                 "unit": row.get(unit_col, "") if unit_col else "",
                 "unit_price": row.get(unit_price_col, "") if unit_price_col else "",
@@ -130,7 +138,69 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
     if not items:
         return pd.DataFrame(), [], msg
     results = detect_items(items, db.get_settings())
-    return pd.DataFrame(results), results, f"Review selesai. {msg} {DISCLAIMER}"
+    return review_summary_dataframe(results), results, f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}"
+
+
+def auto_run_review(upload_state):
+    if not upload_state:
+        return pd.DataFrame(), [], "Upload file dahulu."
+    detected = upload_state.get("detected", {})
+    columns = upload_state.get("columns", [])
+    text_columns = ["review_text"] if "review_text" in columns else [
+        col for key, col in detected.items() if key in ("work_title", "description", "material_service_name", "notes")
+    ]
+    text_columns = text_columns or columns[:1]
+    results_df, results, msg = run_review(
+        upload_state,
+        text_columns,
+        detected.get("volume") or ("volume" if "volume" in columns else None),
+        detected.get("unit") or ("unit" if "unit" in columns else None),
+        detected.get("unit_price") or ("unit_price" if "unit_price" in columns else None),
+        detected.get("total_price") or ("total_price" if "total_price" in columns else None),
+    )
+    return results_df, results, msg
+
+
+def review_summary_dataframe(results):
+    frame = pd.DataFrame(results or [])
+    if frame.empty:
+        return frame
+    frame = frame[frame["confidence_label"].isin(["Sedang", "Tinggi", "Sangat tinggi"])].copy()
+    columns = [
+        "row_id",
+        "source_file",
+        "page_or_sheet",
+        "judul_rab",
+        "section",
+        "item_per_rab",
+        "matched_category",
+        "matched_keyword",
+        "match_type",
+        "final_confidence",
+        "confidence_label",
+        "explanation",
+        "redaction_suggestion",
+    ]
+    for col in columns:
+        if col not in frame.columns:
+            frame[col] = ""
+    return frame[columns].rename(
+        columns={
+            "row_id": "Row",
+            "source_file": "File",
+            "page_or_sheet": "Sheet",
+            "judul_rab": "Judul",
+            "section": "Bagian",
+            "item_per_rab": "Item per RAB",
+            "matched_category": "Kategori",
+            "matched_keyword": "Keyword",
+            "match_type": "Tipe Deteksi",
+            "final_confidence": "Confidence",
+            "confidence_label": "Confidence Level",
+            "explanation": "Alasan Deteksi",
+            "redaction_suggestion": "Sugesti Perubahan Redaksi",
+        }
+    )
 
 
 def filter_results(results, label, category, match_type, keyword, medium_high, manual_only):
@@ -149,7 +219,7 @@ def filter_results(results, label, category, match_type, keyword, medium_high, m
         frame = frame[frame["confidence_label"].isin(["Sedang", "Tinggi", "Sangat tinggi"])]
     if manual_only:
         frame = frame[frame["recommended_action"].astype(str).str.contains("Review Manual", case=False, na=False)]
-    return frame
+    return review_summary_dataframe(frame.to_dict("records"))
 
 
 def save_row_feedback(results, row_id, feedback_type, redaction, notes):
@@ -341,11 +411,7 @@ def app():
                     unit_price_col = gr.Dropdown(label="Unit Price")
                     total_price_col = gr.Dropdown(label="Total Price")
                 run_btn = gr.Button("Run NAC Review", variant="primary")
-                file_in.change(
-                    handle_upload,
-                    file_in,
-                    [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
-                )
+                auto_results_df = gr.Dataframe(label="Hasil Review Otomatis - Confidence Sedang hingga Sangat Tinggi")
             with gr.Tab("Review Hasil"):
                 result_msg = gr.Markdown()
                 with gr.Row():
@@ -354,7 +420,7 @@ def app():
                     match_filter = gr.Dropdown(["Semua", "exact", "synonym", "fuzzy", "semantic", "none"], value="Semua", label="Match Type")
                     keyword_filter = gr.Textbox(label="Keyword")
                 with gr.Row():
-                    medium_high = gr.Checkbox(label="Show only medium to very high confidence")
+                    medium_high = gr.Checkbox(value=True, label="Show only medium to very high confidence")
                     manual_only = gr.Checkbox(label="Show only manual review items")
                 results_df = gr.Dataframe(label="Review Hasil", interactive=True)
                 with gr.Row():
@@ -479,7 +545,24 @@ def app():
                 rebuild_btn = gr.Button("Rebuild embeddings")
                 rebuild_msg = gr.Markdown("Embeddings dibangun lazy saat review; tombol ini hanya penanda refresh cache pada versi demo.")
 
-        run_btn.click(run_review, [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col], [results_df, results_state, result_msg])
+        file_in.change(
+            handle_upload,
+            file_in,
+            [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
+        ).then(
+            auto_run_review,
+            upload_state,
+            [auto_results_df, results_state, result_msg],
+        ).then(
+            lambda results: review_summary_dataframe(results),
+            results_state,
+            results_df,
+        )
+        run_btn.click(run_review, [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col], [auto_results_df, results_state, result_msg]).then(
+            lambda results: review_summary_dataframe(results),
+            results_state,
+            results_df,
+        )
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)
         fb_btn.click(save_row_feedback, [results_state, fb_row, fb_type, fb_redaction, fb_notes], fb_msg)

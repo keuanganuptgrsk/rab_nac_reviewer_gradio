@@ -71,6 +71,7 @@ def init_db():
             """
         )
     seed_db_if_empty()
+    ensure_demo_keywords()
     create_templates()
 
 
@@ -153,6 +154,44 @@ def _default_synonyms(keyword):
         "biaya representasi": ["representasi", "biaya jamuan"],
     }
     return mapping.get(keyword, [])
+
+
+def ensure_demo_keywords():
+    demo_keywords = [
+        ("Rapat/Jamuan", "konsumsi", "Konsumsi/jamuan umum; demo keyword perlu validasi", "DEMO", "high", ["prasmanan", "makan minum", "minuman", "snack box"]),
+        ("Rapat/Jamuan", "catering", "Catering/jamuan; demo keyword perlu validasi", "DEMO", "high", ["katering", "charge catering"]),
+        ("Rapat/Jamuan", "prasmanan", "Konsumsi prasmanan; demo keyword perlu validasi", "DEMO", "high", ["menu prasmanan"]),
+        ("Rapat/Jamuan", "snack", "Snack/kudapan; demo keyword perlu validasi", "DEMO", "high", ["snack anak", "snack anak2", "snack box", "kudapan"]),
+        ("Rapat/Jamuan", "minuman", "Minuman/konsumsi; demo keyword perlu validasi", "DEMO", "medium", ["es jeruk", "nektar"]),
+        ("Pribadi/Hadiah", "doorprize", "Doorprize/hadiah; demo keyword perlu validasi", "DEMO", "high", ["hadiah quiz", "hadiah quizziz"]),
+        ("Pribadi/Hadiah", "oleh-oleh", "Oleh-oleh/cinderamata; demo keyword perlu validasi", "DEMO", "medium", ["buah tangan", "bawaan"]),
+        ("Pribadi/Hadiah", "cinderamata", "Cinderamata/souvenir; demo keyword perlu validasi", "DEMO", "medium", ["kenang-kenangan"]),
+        ("Representasi", "fee narasumber", "Fee/honor narasumber; demo keyword perlu validasi", "DEMO", "medium", ["honor narasumber", "tambahan fee penceramah"]),
+        ("Pegawai", "baju vip", "Pakaian non-teknis/VIP; demo keyword perlu validasi", "DEMO", "medium", ["seragam vip"]),
+    ]
+    with connect() as conn:
+        for category, keyword, desc, ref, severity, synonyms in demo_keywords:
+            existing = conn.execute("SELECT id FROM nac_keywords WHERE lower(keyword)=lower(?)", (keyword,)).fetchone()
+            if existing:
+                keyword_id = existing["id"]
+            else:
+                cur = conn.execute(
+                    """INSERT INTO nac_keywords
+                    (category, keyword, description, reference, severity, status, created_by, created_at, updated_at, notes)
+                    VALUES (?, ?, ?, ?, ?, 'active', 'system_seed', ?, ?, 'Demo seed; wajib divalidasi')""",
+                    (category, keyword, desc, ref, severity, now(), now()),
+                )
+                keyword_id = cur.lastrowid
+            for synonym in synonyms:
+                exists = conn.execute(
+                    "SELECT id FROM nac_synonyms WHERE nac_keyword_id=? AND lower(synonym)=lower(?)",
+                    (keyword_id, synonym),
+                ).fetchone()
+                if not exists:
+                    conn.execute(
+                        "INSERT INTO nac_synonyms (nac_keyword_id, synonym, weight, status, created_at) VALUES (?, ?, 0.9, 'active', ?)",
+                        (keyword_id, synonym, now()),
+                    )
 
 
 def rows(query, params=()):
