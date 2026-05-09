@@ -164,6 +164,35 @@ def save_row_feedback(results, row_id, feedback_type, redaction, notes):
     return "Feedback tersimpan ke SQLite."
 
 
+def approve_suggested_synonym(results, row_id, weight):
+    frame = pd.DataFrame(results or [])
+    if frame.empty or not row_id:
+        return "Pilih row_id yang memiliki suggested synonym.", refresh_synonyms()
+    row = frame[frame["row_id"].astype(str) == str(row_id)]
+    if row.empty:
+        return "row_id tidak ditemukan.", refresh_synonyms()
+    rec = row.iloc[0].to_dict()
+    candidate = str(rec.get("suggested_synonym_candidate", "") or "").strip()
+    keyword = str(rec.get("suggested_synonym_for_keyword", "") or rec.get("matched_keyword", "") or "").strip()
+    if not candidate or not keyword:
+        return "Baris ini belum memiliki kandidat sinonim dari model.", refresh_synonyms()
+    keyword_row = db.get_keyword_by_text(keyword)
+    if not keyword_row:
+        return f"Keyword induk tidak ditemukan: {keyword}", refresh_synonyms()
+    if db.synonym_exists(keyword_row["id"], candidate):
+        return "Sinonim sudah ada di database.", refresh_synonyms()
+    db.add_synonym(keyword_row["id"], candidate, float(weight or 0.85), "active")
+    db.save_feedback(
+        row_id,
+        rec.get("original_text", ""),
+        keyword,
+        "Add as Synonym",
+        candidate,
+        "Approved model-suggested synonym",
+    )
+    return f"Sinonim '{candidate}' ditambahkan untuk keyword '{keyword}'.", refresh_synonyms()
+
+
 def add_keyword_ui(category, keyword, description, reference, severity, status, notes):
     if not keyword:
         return "Keyword wajib diisi.", refresh_keywords()
@@ -335,6 +364,12 @@ def app():
                 fb_notes = gr.Textbox(label="Reviewer Notes")
                 fb_btn = gr.Button("Simpan Feedback")
                 fb_msg = gr.Markdown()
+                gr.Markdown("### Suggested Synonyms dari Model HF\nKandidat ini berasal dari semantic/fuzzy match dan harus divalidasi reviewer sebelum masuk database.")
+                with gr.Row():
+                    syn_row = gr.Textbox(label="row_id kandidat sinonim")
+                    syn_approve_weight = gr.Number(value=0.85, label="Synonym weight")
+                    approve_syn_btn = gr.Button("Approve Suggested Synonym")
+                approve_syn_msg = gr.Markdown()
             with gr.Tab("Database NAC"):
                 gr.Markdown("Seed database bersifat demo dan wajib divalidasi dengan PMK/kebijakan internal.")
                 kw_table = gr.Dataframe(value=refresh_keywords(), label="NAC Keywords")
@@ -397,6 +432,7 @@ def app():
                 fn = gr.Dataframe(label="Most Common False Negatives")
                 sug_kw = gr.Dataframe(label="Frequently Suggested New NAC Keywords")
                 sug_syn = gr.Dataframe(label="Frequently Suggested Synonyms")
+                model_syn = gr.Dataframe(label="Model-Suggested Synonyms Approved by Reviewer")
                 sug_exc = gr.Dataframe(label="Suggested Exceptions")
                 fb_hist = gr.Dataframe(label="Feedback History")
             with gr.Tab("Export Excel"):
@@ -447,6 +483,7 @@ def app():
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)
         fb_btn.click(save_row_feedback, [results_state, fb_row, fb_type, fb_redaction, fb_notes], fb_msg)
+        approve_syn_btn.click(approve_suggested_synonym, [results_state, syn_row, syn_approve_weight], [approve_syn_msg, syn_table])
         add_kw.click(add_keyword_ui, [kw_cat, kw_text, kw_desc, kw_ref, kw_sev, kw_status, kw_notes], [kw_msg, kw_table])
         add_syn.click(add_synonym_ui, [syn_parent, syn_text, syn_weight], [syn_msg, syn_table])
         kw_status_btn.click(update_keyword_status_ui, [kw_status_id, kw_status_new], [kw_msg, kw_table])
@@ -457,7 +494,7 @@ def app():
         exc_status_btn.click(update_exception_status_ui, [exc_status_id, exc_status_new], [exc_msg, exc_table])
         import_btn.click(import_keywords_ui, import_file, [kw_msg, kw_table])
         export_kw_btn.click(export_keywords_ui, outputs=export_kw_file)
-        learn_btn.click(learning_ui, outputs=[fp, fn, sug_kw, sug_syn, sug_exc, fb_hist])
+        learn_btn.click(learning_ui, outputs=[fp, fn, sug_kw, sug_syn, model_syn, sug_exc, fb_hist])
         export_btn.click(export_review_ui, results_state, export_file)
         export_fb_btn.click(export_feedback_logs, outputs=export_fb_file)
         backup_btn.click(backup_ui, outputs=backup_file)

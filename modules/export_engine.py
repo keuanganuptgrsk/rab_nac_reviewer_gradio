@@ -18,7 +18,9 @@ def export_review_excel(results):
             "row_id", "source_file", "page_or_sheet", "original_text", "normalized_text", "item_description",
             "volume", "unit", "unit_price", "total_price", "matched_keyword", "matched_category", "match_type",
             "fuzzy_score", "semantic_score", "allowable_score", "final_confidence", "confidence_label",
-            "explanation", "recommended_action", "redaction_suggestion", "user_feedback", "reviewer_notes",
+            "explanation", "recommended_action", "redaction_suggestion", "suggested_synonym_candidate",
+            "suggested_synonym_for_keyword", "synonym_suggestion_confidence", "synonym_suggestion_reason",
+            "user_feedback", "reviewer_notes",
         ])
     summary = _summary(findings)
     with pd.ExcelWriter(path, engine="xlsxwriter") as writer:
@@ -54,4 +56,3 @@ def export_feedback_logs():
     path = EXPORT_DIR / f"feedback_log_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.xlsx"
     pd.DataFrame(db.get_feedback()).to_excel(path, index=False)
     return str(path)
-

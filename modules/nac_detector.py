@@ -1,3 +1,5 @@
+import re
+
 from rapidfuzz import fuzz, process
 
 from . import db
@@ -48,6 +50,41 @@ def _exception(norm_text, keyword_id=None):
             if row.get("nac_keyword_id") in (None, "", keyword_id) or not row.get("nac_keyword_id"):
                 return row
     return None
+
+
+def _suggest_synonym(original, norm_text, matched, best, settings):
+    if not matched:
+        return "", "", 0.0, ""
+    if best["match_type"] in ("exact", "synonym"):
+        return "", "", 0.0, ""
+    signal = max(float(best.get("semantic", 0)), float(best.get("fuzzy", 0)))
+    min_signal = min(float(settings.get("semantic_threshold", 60)), float(settings.get("fuzzy_threshold", 78)))
+    if signal < min_signal:
+        return "", "", 0.0, ""
+    candidate = _candidate_phrase(original, norm_text, matched.get("keyword", ""))
+    if not candidate or candidate.lower() == str(matched.get("keyword", "")).lower():
+        return "", "", 0.0, ""
+    reason = (
+        f"Kandidat sinonim dari {best['match_type']} match. "
+        "Reviewer harus validasi sebelum ditambahkan ke database."
+    )
+    return candidate, matched.get("keyword", ""), round(signal, 2), reason
+
+
+def _candidate_phrase(original, norm_text, keyword):
+    text = str(original or "").strip()
+    parts = [p.strip(" -:;,.") for p in re.split(r"[|;\n\r]+", text) if p.strip(" -:;,.")]
+    if parts:
+        parts = sorted(parts, key=len)
+        for part in parts:
+            if 4 <= len(part) <= 90:
+                return part
+    words = norm_text.split()
+    if 2 <= len(words) <= 10:
+        return norm_text
+    if len(words) > 10:
+        return " ".join(words[:10])
+    return str(keyword or "").strip()
 
 
 def detect_item(item, settings=None):
@@ -123,6 +160,7 @@ def detect_item(item, settings=None):
     manual = score >= 45 or (score >= 35 and allowable_score >= 60) or (exception_hit and exc.get("action") == "manual_review")
     explanation = _explanation(best, matched, allowable_score, allowable_kw, exc, feedback_adj)
     suggestion = generate_suggestion(original, matched.get("keyword", ""), matched.get("category", ""), score, allowable_score, exception_hit)
+    synonym_candidate, synonym_for, synonym_confidence, synonym_reason = _suggest_synonym(original, norm, matched, best, settings)
     return {
         "row_id": item.get("row_id"),
         "source_file": item.get("source_file"),
@@ -145,6 +183,10 @@ def detect_item(item, settings=None):
         "explanation": explanation,
         "recommended_action": "Perlu Review Manual" if manual else recommended_action(score, allowable_score),
         "redaction_suggestion": suggestion,
+        "suggested_synonym_candidate": synonym_candidate,
+        "suggested_synonym_for_keyword": synonym_for,
+        "synonym_suggestion_confidence": synonym_confidence,
+        "synonym_suggestion_reason": synonym_reason,
         "user_feedback": "",
         "reviewer_notes": "",
     }
@@ -169,4 +211,3 @@ def _explanation(best, matched, allowable_score, allowable_kw, exc, feedback_adj
         parts.append(f"Penyesuaian feedback historis: {feedback_adj:+.0f}.")
     parts.append("Hasil adalah bantuan awal dan perlu validasi reviewer.")
     return " ".join(parts)
-

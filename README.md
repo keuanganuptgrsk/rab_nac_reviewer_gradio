@@ -113,8 +113,9 @@ Tidak ada retraining kompleks. Feedback digunakan untuk:
 - Menaikkan skor pola yang sering ditandai `Correct NAC`
 - Menyarankan exception untuk false positive berulang
 - Menyarankan keyword/sinonim baru dari feedback reviewer
+- Menampilkan kandidat sinonim dari semantic/fuzzy match model Hugging Face untuk disetujui reviewer
 
-Jika sinonim atau exception ditambahkan, database langsung dipakai pada review berikutnya. Semantic embeddings dibangun secara lazy saat review.
+Kandidat sinonim dari model tidak otomatis masuk database. Reviewer harus menekan **Approve Suggested Synonym** pada baris hasil review yang sesuai. Jika sinonim atau exception ditambahkan, database langsung dipakai pada review berikutnya. Semantic embeddings dibangun secara lazy saat review.
 
 ## OCR
 

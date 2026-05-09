@@ -179,6 +179,11 @@ def get_keywords(active_only=True):
     return rows(f"SELECT * FROM nac_keywords {clause} ORDER BY category, keyword")
 
 
+def get_keyword_by_text(keyword):
+    found = rows("SELECT * FROM nac_keywords WHERE lower(keyword)=lower(?) ORDER BY id LIMIT 1", (keyword,))
+    return found[0] if found else None
+
+
 def get_synonyms(active_only=True):
     clause = "WHERE s.status='active'" if active_only else ""
     return rows(
@@ -224,6 +229,14 @@ def add_synonym(keyword_id, synonym, weight=0.9, status="active"):
         "INSERT INTO nac_synonyms (nac_keyword_id, synonym, weight, status, created_at) VALUES (?, ?, ?, ?, ?)",
         (keyword_id, synonym, weight, status, now()),
     )
+
+
+def synonym_exists(keyword_id, synonym):
+    found = rows(
+        "SELECT id FROM nac_synonyms WHERE nac_keyword_id=? AND lower(synonym)=lower(?) LIMIT 1",
+        (keyword_id, synonym),
+    )
+    return bool(found)
 
 
 def update_synonym_status(synonym_id, status):
