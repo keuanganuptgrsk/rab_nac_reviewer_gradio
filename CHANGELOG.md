@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.4.1 - Audit-Safe Redaction Suggestions - 2026-05-09
+
+- Sugesti redaksi diubah menjadi format `Usulan redaksi` yang lebih singkat dan langsung bisa direview.
+- Menambahkan template saran spesifik untuk narasumber, konsumsi/catering, hadiah/souvenir, pakaian/perlengkapan non-teknis, dan transportasi.
+- Saran tidak mengganti substansi biaya menjadi istilah generik yang dapat menyamarkan NAC; jika tidak allowable, sistem menyarankan pemisahan dari komponen allowable.
+
 ## v0.4.0 - Auto Review RAB Upload - 2026-05-09
 
 - Upload Excel RAB langsung menjalankan NAC review otomatis.
@@ -28,4 +34,3 @@ Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan k
 - SQLite lokal untuk keyword NAC, sinonim, allowable keyword, exception, feedback, settings, dan backup.
 - Deteksi hybrid exact, synonym, fuzzy, semantic opsional, allowable competitor, exception, dan feedback adjustment.
 - Export Excel multi-sheet untuk hasil review dan database snapshot.
-
