@@ -12,6 +12,7 @@ from modules.keyword_manager import export_keyword_database, import_keywords_fro
 from modules.nac_detector import detect_items
 from modules.ocr_engine import extract_text_from_image, extract_text_from_pdf_scan
 from modules.pdf_loader import extract_text_from_pdf
+from modules.version import APP_RELEASE_NOTES, APP_RELEASE_TITLE, APP_VERSION, version_banner
 
 
 DISCLAIMER = (
@@ -398,7 +399,11 @@ def app():
     with gr.Blocks(title="RAB NAC Reviewer Copilot") as demo:
         upload_state = gr.State({})
         results_state = gr.State([])
-        gr.Markdown("# RAB NAC Reviewer Copilot\n**Bukan Keputusan Final.** " + DISCLAIMER)
+        gr.Markdown(
+            f"# RAB NAC Reviewer Copilot\n"
+            f"**Versi {APP_VERSION} - {APP_RELEASE_TITLE}.** {APP_RELEASE_NOTES}\n\n"
+            f"**Bukan Keputusan Final.** {DISCLAIMER}"
+        )
         with gr.Tabs():
             with gr.Tab("Upload RAB"):
                 file_in = gr.File(label="Upload RAB", file_types=[".xlsx", ".xls", ".csv", ".pdf", ".png", ".jpg", ".jpeg"])
@@ -544,6 +549,12 @@ def app():
                 settings_msg = gr.Markdown()
                 rebuild_btn = gr.Button("Rebuild embeddings")
                 rebuild_msg = gr.Markdown("Embeddings dibangun lazy saat review; tombol ini hanya penanda refresh cache pada versi demo.")
+                gr.Markdown(
+                    "### Versioning\n"
+                    f"{version_banner()}\n\n"
+                    "Setiap penambahan fitur wajib memperbarui `modules/version.py` dan `CHANGELOG.md` "
+                    "dengan versi, judul, tanggal, dan keterangan."
+                )
 
         file_in.change(
             handle_upload,

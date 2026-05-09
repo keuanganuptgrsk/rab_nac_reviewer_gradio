@@ -22,6 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
+- Versi saat ini: `v0.4.0 - Auto Review RAB Upload`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.
@@ -29,6 +30,15 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 - Deteksi hybrid: exact keyword, sinonim, fuzzy matching, semantic similarity opsional, allowable competitor, exception, dan feedback.
 - SQLite lokal untuk database keyword, exception, settings, feedback, dan backup.
 - Export Excel multi-sheet untuk audit/review.
+
+## Versioning
+
+Setiap penambahan fitur wajib memperbarui:
+
+- `modules/version.py` untuk versi aktif, judul rilis, dan keterangan singkat yang tampil di UI.
+- `CHANGELOG.md` untuk catatan versi, judul, tanggal, dan detail perubahan.
+
+Format versi yang digunakan: `MAJOR.MINOR.PATCH`.
 
 ## Instalasi Lokal
 
