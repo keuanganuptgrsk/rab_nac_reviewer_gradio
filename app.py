@@ -112,6 +112,11 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3 {
     border-bottom: 1px solid var(--rab-border) !important;
 }
 
+div[role="tabpanel"] {
+    min-height: 720px;
+    padding-top: 18px;
+}
+
 .tab-nav,
 div[role="tablist"] {
     display: flex !important;
@@ -753,7 +758,18 @@ def _chunk_text(text, max_len=900):
 def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order):
     items, msg = build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col)
     if not items:
-        return gr.update(value="", visible=False), gr.update(value=pd.DataFrame(), visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
+        return (
+            gr.update(value="", visible=False),
+            gr.update(value=pd.DataFrame(), visible=False),
+            [],
+            msg,
+            gr.update(value=pd.DataFrame(), visible=False),
+            gr.update(visible=False),
+            gr.update(visible=False),
+            gr.update(visible=False),
+            gr.update(visible=False),
+            gr.update(visible=False),
+        )
     results = detect_items(items, db.get_settings())
     summary = review_summary_dataframe(results)
     all_materials = all_materials_dataframe(results)
@@ -763,6 +779,11 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
         results,
         f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
         gr.update(value=summary, visible=True),
+        gr.update(visible=True),
+        gr.update(visible=True),
+        gr.update(visible=True),
+        gr.update(visible=True),
+        gr.update(visible=True),
     )
 
 
@@ -775,15 +796,17 @@ def auto_run_review(upload_state):
         col for key, col in detected.items() if key in ("work_title", "description", "material_service_name", "notes")
     ]
     text_columns = text_columns or columns[:1]
-    results_df, results, msg = run_review(
+    review_outputs = run_review(
         upload_state,
         text_columns,
         detected.get("volume") or ("volume" if "volume" in columns else None),
         detected.get("unit") or ("unit" if "unit" in columns else None),
         detected.get("unit_price") or ("unit_price" if "unit_price" in columns else None),
         detected.get("total_price") or ("total_price" if "total_price" in columns else None),
+        "Confidence",
+        "Tinggi ke rendah",
     )
-    return results_df, results, msg
+    return review_outputs[0], review_outputs[2], review_outputs[3]
 
 
 def review_summary_dataframe(results):
@@ -853,6 +876,15 @@ def all_materials_dataframe(results):
 
 def render_sorted_findings(results, sort_by, sort_order):
     return gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=bool(results))
+
+
+def reset_analysis_visibility():
+    return (
+        gr.update(visible=False),
+        gr.update(visible=False),
+        gr.update(value="", visible=False),
+        gr.update(value=pd.DataFrame(), visible=False),
+    )
 
 
 def render_findings_cards(results, sort_by="Confidence", sort_order="Tinggi ke rendah"):
@@ -1101,10 +1133,10 @@ def _infer_keyword_metadata(keyword):
 def add_keyword_simple_ui(keyword):
     keyword = str(keyword or "").strip()
     if not keyword:
-        return "Isi nama keyword NAC terlebih dahulu.", render_keyword_cards("")
+        return "Isi nama keyword NAC terlebih dahulu.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
     existing = db.get_keyword_by_text(keyword)
     if existing:
-        return f"Keyword '{keyword}' sudah ada.", render_keyword_cards(keyword)
+        return f"Keyword '{keyword}' sudah ada.", render_keyword_cards(keyword), gr.update(choices=keyword_delete_choices(), value=None)
     category, severity, notes = _infer_keyword_metadata(keyword)
     keyword_id = db.add_keyword(
         category,
@@ -1122,22 +1154,37 @@ def add_keyword_simple_ui(keyword):
     msg = f"Keyword '{keyword}' ditambahkan."
     if aliases:
         msg += " Sistem menambahkan kandidat sinonim/parafrasa otomatis: " + ", ".join(aliases) + "."
-    return msg, render_keyword_cards(keyword)
+    return msg, render_keyword_cards(keyword), gr.update(choices=keyword_delete_choices(), value=None)
+
+
+def keyword_delete_choices():
+    return [f"{row['id']} | {row['keyword']}" for row in db.get_keywords(False) if row.get("status") == "active"]
+
+
+def delete_keyword_simple_ui(selection):
+    if not selection:
+        return "Pilih keyword yang ingin dihapus dari daftar aktif.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
+    keyword_id = str(selection).split("|", 1)[0].strip()
+    try:
+        db.update_keyword_status(int(keyword_id), "inactive")
+    except Exception as exc:
+        return f"Gagal menghapus keyword: {exc}", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
+    return "Keyword dihapus dari daftar aktif. Data tidak dihapus permanen agar tetap audit-friendly.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
 
 
 def import_keywords_simple_ui(file_obj):
     if file_obj is None:
-        return "Upload file Excel keyword dahulu.", render_keyword_cards("")
+        return "Upload file Excel keyword dahulu.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
     try:
         count = import_keywords_from_excel(_file_path(file_obj))
     except Exception as exc:
-        return f"Import gagal: {exc}", render_keyword_cards("")
-    return f"{count} keyword berhasil diimpor dari Excel.", render_keyword_cards("")
+        return f"Import gagal: {exc}", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
+    return f"{count} keyword berhasil diimpor dari Excel.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
 
 
 def render_keyword_cards(query=""):
     query_l = str(query or "").strip().lower()
-    keywords = db.get_keywords(False)
+    keywords = [row for row in db.get_keywords(False) if row.get("status") == "active"]
     synonyms = db.get_synonyms(False)
     aliases_by_keyword = {}
     for syn in synonyms:
@@ -1431,18 +1478,28 @@ def app():
                 total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
                 run_status = gr.Markdown(visible=False)
-                with gr.Row():
-                    sort_by = gr.Radio(["Confidence", "Row"], value="Confidence", label="Urutkan berdasarkan")
-                    sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi"], value="Tinggi ke rendah", label="Arah urutan")
+                with gr.Group(visible=False) as sort_panel:
+                    with gr.Row():
+                        sort_by = gr.Radio(["Confidence", "Row"], value="Confidence", label="Urutkan berdasarkan")
+                        sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi"], value="Tinggi ke rendah", label="Arah urutan")
                 auto_results_df = gr.HTML(visible=False)
-                with gr.Row():
-                    export_potential_pdf_btn = gr.Button("Export PDF Rangkuman Potensi NAC")
-                    export_all_pdf_btn = gr.Button("Export PDF Seluruh Material RAB")
-                    export_all_excel_btn = gr.Button("Export Excel Seluruh Material RAB")
-                with gr.Row():
-                    export_potential_pdf_file = gr.File(label="PDF Rangkuman Potensi NAC")
-                    export_all_pdf_file = gr.File(label="PDF Seluruh Material RAB")
-                    export_all_excel_file = gr.File(label="Excel Seluruh Material RAB")
+                with gr.Group(visible=False) as export_panel:
+                    with gr.Row():
+                        export_potential_pdf_btn = gr.DownloadButton(
+                            "Export PDF Rangkuman Potensi NAC",
+                            value=export_potential_pdf_ui,
+                            inputs=results_state,
+                        )
+                        export_all_pdf_btn = gr.DownloadButton(
+                            "Export PDF Seluruh Material RAB",
+                            value=export_all_pdf_ui,
+                            inputs=results_state,
+                        )
+                        export_all_excel_btn = gr.DownloadButton(
+                            "Export Excel Seluruh Material RAB",
+                            value=export_all_excel_ui,
+                            inputs=results_state,
+                        )
                 all_materials_df = gr.Dataframe(label="Tabel Seluruh Material RAB", visible=False)
                 result_msg = gr.Markdown(visible=False)
                 results_df = gr.Dataframe(label="Review Hasil", visible=False)
@@ -1468,6 +1525,10 @@ def app():
                     import_btn = gr.Button("Import Keyword dari Excel")
                     export_kw_btn = gr.Button("Export Database Keyword")
                     export_kw_file = gr.File(label="Download Keyword DB")
+                with gr.Accordion("Hapus keyword NAC", open=False):
+                    delete_kw_choice = gr.Dropdown(choices=keyword_delete_choices(), label="Keyword NAC yang akan dihapus")
+                    delete_kw_btn = gr.Button("Hapus Keyword NAC", variant="stop")
+                    gr.Markdown("Keyword dibuat inactive, bukan dihapus permanen, agar riwayat audit tetap aman.")
                 kw_msg = gr.Markdown()
                 keyword_search = gr.Textbox(label="Cari keyword NAC", placeholder="Contoh: konsumsi, honorarium, transport, hadiah")
                 keyword_cards = gr.HTML(value=render_keyword_cards(""))
@@ -1499,6 +1560,9 @@ def app():
             handle_upload,
             file_in,
             [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
+        ).then(
+            reset_analysis_visibility,
+            outputs=[sort_panel, export_panel, auto_results_df, all_materials_df],
         )
         run_btn.click(
             review_started_ui,
@@ -1507,22 +1571,31 @@ def app():
         ).then(
             run_review,
             [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order],
-            [auto_results_df, all_materials_df, results_state, result_msg, results_df],
+            [
+                auto_results_df,
+                all_materials_df,
+                results_state,
+                result_msg,
+                results_df,
+                sort_panel,
+                export_panel,
+                export_potential_pdf_btn,
+                export_all_pdf_btn,
+                export_all_excel_btn,
+            ],
         ).then(
             review_finished_ui,
             outputs=run_btn,
         )
         sort_by.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
         sort_order.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
-        export_potential_pdf_btn.click(export_potential_pdf_ui, results_state, export_potential_pdf_file)
-        export_all_pdf_btn.click(export_all_pdf_ui, results_state, export_all_pdf_file)
-        export_all_excel_btn.click(export_all_excel_ui, results_state, export_all_excel_file)
         redaction_btn.click(analyze_redaction_ui, redaction_text, redaction_result)
         redaction_text.submit(analyze_redaction_ui, redaction_text, redaction_result)
         redaction_text.change(analyze_redaction_ui, redaction_text, redaction_result)
         keyword_search.change(render_keyword_cards, keyword_search, keyword_cards)
-        simple_add_btn.click(add_keyword_simple_ui, simple_kw, [kw_msg, keyword_cards])
-        import_btn.click(import_keywords_simple_ui, import_file, [kw_msg, keyword_cards])
+        simple_add_btn.click(add_keyword_simple_ui, simple_kw, [kw_msg, keyword_cards, delete_kw_choice])
+        import_btn.click(import_keywords_simple_ui, import_file, [kw_msg, keyword_cards, delete_kw_choice])
+        delete_kw_btn.click(delete_keyword_simple_ui, delete_kw_choice, [kw_msg, keyword_cards, delete_kw_choice])
         export_kw_btn.click(export_keywords_ui, outputs=export_kw_file)
         learn_btn.click(learning_ui, outputs=learning_html)
         backup_btn.click(backup_ui, outputs=backup_file)

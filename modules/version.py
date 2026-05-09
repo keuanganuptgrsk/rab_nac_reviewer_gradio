@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.5"
-APP_RELEASE_TITLE = "Finance Friendly Review Flow"
+APP_VERSION = "0.6.6"
+APP_RELEASE_TITLE = "Cleaner Upload and Keyword Delete"
 APP_RELEASE_NOTES = (
-    "Navigasi dipangkas, Database NAC cukup input keyword/upload Excel, Settings disederhanakan, Learning Dashboard dibuat berbasis kartu, dan tab Analisa Redaksi NAC ditambahkan."
+    "Keyword NAC dapat dihapus dari daftar aktif, sort/export disembunyikan sebelum review, tombol download diringkas tanpa panel file besar, dan layout tab dibuat lebih stabil."
 )
 
 

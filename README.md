@@ -22,7 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.6.5 - Finance Friendly Review Flow`.
+- Versi saat ini: `v0.6.6 - Cleaner Upload and Keyword Delete`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.

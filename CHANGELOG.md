@@ -2,6 +2,14 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.6 - Cleaner Upload and Keyword Delete - 2026-05-09
+
+- Menambahkan fitur hapus keyword NAC dari daftar aktif dengan soft-delete `inactive`.
+- Menyembunyikan kontrol sort dan tombol export sebelum RAB dianalisa.
+- Mengganti output file export menjadi tiga tombol download saja tanpa panel file besar.
+- Menambahkan tinggi minimum panel tab agar posisi halaman lebih stabil saat berpindah tab.
+- Menyembunyikan keyword inactive dari kartu Database NAC.
+
 ## v0.6.5 - Finance Friendly Review Flow - 2026-05-09
 
 - Menghapus tab `Review Hasil` dan `Export Excel` dari navigasi utama.
