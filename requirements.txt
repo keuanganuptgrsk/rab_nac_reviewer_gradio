@@ -1,0 +1,13 @@
+gradio
+pandas
+openpyxl
+xlrd
+xlsxwriter
+rapidfuzz
+sentence-transformers
+scikit-learn
+numpy
+PyMuPDF
+pillow
+Sastrawi
+plotly
