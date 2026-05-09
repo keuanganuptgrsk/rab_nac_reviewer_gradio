@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.0 - Tabtion-Inspired UI Refresh - 2026-05-09
+
+- Mengadopsi arah visual modern seperti design system Tabtion dengan warna `#DCFCE7`, `#0B61A2`, `#15803D`, `#FFFFFF`, dan `#1D1D1F`.
+- Menambahkan font role Manrope untuk heading dan Geist untuk body melalui CSS import.
+- Mengubah header aplikasi menjadi hero ringkas berisi versi, judul, keterangan rilis, dan disclaimer.
+- Merapikan tab, tombol, input, dan tabel agar lebih konsisten sebagai workspace review internal.
+
 ## v0.4.1 - Audit-Safe Redaction Suggestions - 2026-05-09
 
 - Sugesti redaksi diubah menjadi format `Usulan redaksi` yang lebih singkat dan langsung bisa direview.

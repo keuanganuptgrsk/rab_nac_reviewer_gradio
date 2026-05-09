@@ -22,6 +22,154 @@ DISCLAIMER = (
 BASE_DIR = Path(__file__).resolve().parent
 db.init_db()
 
+TABTION_THEME_CSS = """
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
+:root {
+    --rab-bg: #ffffff;
+    --rab-primary: #dcfce7;
+    --rab-secondary: #0b61a2;
+    --rab-accent: #15803d;
+    --rab-text: #1d1d1f;
+    --rab-muted: #667085;
+    --rab-border: #d9eadf;
+    --rab-soft: #f7fdf9;
+}
+
+body,
+.gradio-container {
+    background: var(--rab-bg) !important;
+    color: var(--rab-text) !important;
+    font-family: "Geist", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+.gradio-container {
+    max-width: 1440px !important;
+    margin: 0 auto !important;
+    padding: 28px 34px 44px !important;
+}
+
+h1, h2, h3, .prose h1, .prose h2, .prose h3 {
+    font-family: "Manrope", "Geist", Inter, sans-serif !important;
+    color: var(--rab-text) !important;
+    letter-spacing: 0 !important;
+}
+
+#app-hero {
+    background: linear-gradient(135deg, #ffffff 0%, #f7fdf9 52%, #dcfce7 100%);
+    border: 1px solid var(--rab-border);
+    border-radius: 8px;
+    padding: 28px 30px;
+    margin-bottom: 18px;
+}
+
+#app-hero h1 {
+    font-size: clamp(34px, 4vw, 58px);
+    line-height: 1.02;
+    margin: 0 0 12px;
+}
+
+#app-hero p {
+    color: var(--rab-muted);
+    font-size: 16px;
+    line-height: 1.55;
+    max-width: 960px;
+}
+
+#app-hero .version-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--rab-accent);
+    background: var(--rab-primary);
+    border: 1px solid #b7efc5;
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+#app-hero .disclaimer {
+    color: var(--rab-secondary);
+    font-weight: 600;
+}
+
+.tabs {
+    border-bottom: 1px solid var(--rab-border) !important;
+}
+
+.tab-nav button,
+.tabs button {
+    font-family: "Geist", Inter, sans-serif !important;
+    font-weight: 650 !important;
+    color: var(--rab-muted) !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.tab-nav button.selected,
+.tabs button.selected {
+    color: var(--rab-accent) !important;
+    border-bottom-color: var(--rab-accent) !important;
+}
+
+button.primary,
+.primary > button,
+button[variant="primary"] {
+    background: var(--rab-accent) !important;
+    border-color: var(--rab-accent) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+}
+
+button {
+    border-radius: 8px !important;
+    font-family: "Geist", Inter, sans-serif !important;
+}
+
+.form, .panel, .block, .wrap, .container {
+    border-radius: 8px !important;
+}
+
+label, .label-wrap span {
+    color: var(--rab-text) !important;
+    font-weight: 650 !important;
+}
+
+input, textarea, select {
+    border-color: var(--rab-border) !important;
+    border-radius: 8px !important;
+}
+
+.dataframe, .table-wrap {
+    border-radius: 8px !important;
+    border-color: var(--rab-border) !important;
+}
+
+table {
+    font-family: "Geist", Inter, sans-serif !important;
+}
+
+th {
+    background: var(--rab-soft) !important;
+    color: var(--rab-text) !important;
+    font-weight: 700 !important;
+}
+
+td {
+    color: var(--rab-text) !important;
+}
+
+a {
+    color: var(--rab-accent) !important;
+}
+
+.markdown-code, code {
+    border-radius: 6px !important;
+}
+"""
+
 
 def _file_path(file_obj):
     return file_obj.name if hasattr(file_obj, "name") else str(file_obj)
@@ -396,13 +544,25 @@ def reset_db_ui():
 
 def app():
     settings = db.get_settings()
-    with gr.Blocks(title="RAB NAC Reviewer Copilot") as demo:
+    theme = gr.themes.Soft(
+        primary_hue="green",
+        secondary_hue="blue",
+        neutral_hue="gray",
+        font=["Geist", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        font_mono=["ui-monospace", "SFMono-Regular", "Consolas", "monospace"],
+    )
+    with gr.Blocks(title="RAB NAC Reviewer Copilot", theme=theme, css=TABTION_THEME_CSS) as demo:
         upload_state = gr.State({})
         results_state = gr.State([])
         gr.Markdown(
-            f"# RAB NAC Reviewer Copilot\n"
-            f"**Versi {APP_VERSION} - {APP_RELEASE_TITLE}.** {APP_RELEASE_NOTES}\n\n"
-            f"**Bukan Keputusan Final.** {DISCLAIMER}"
+            f"""
+<section id="app-hero">
+  <div class="version-pill">Versi {APP_VERSION} - {APP_RELEASE_TITLE}</div>
+  <h1>RAB NAC Reviewer Copilot</h1>
+  <p>{APP_RELEASE_NOTES}</p>
+  <p class="disclaimer">Bukan Keputusan Final. {DISCLAIMER}</p>
+</section>
+"""
         )
         with gr.Tabs():
             with gr.Tab("Upload RAB"):

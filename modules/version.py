@@ -1,8 +1,8 @@
-APP_VERSION = "0.4.1"
-APP_RELEASE_TITLE = "Audit-Safe Redaction Suggestions"
+APP_VERSION = "0.5.0"
+APP_RELEASE_TITLE = "Tabtion-Inspired UI Refresh"
 APP_RELEASE_NOTES = (
-    "Sugesti perubahan redaksi dibuat lebih singkat, spesifik per kategori, dan tetap audit-able "
-    "tanpa menyamarkan substansi biaya yang berpotensi NAC."
+    "Tampilan web diperbarui dengan warna hijau-putih, aksen biru, tipografi Manrope/Geist, "
+    "header modern, tab rapi, dan tabel yang lebih mudah discan."
 )
 
 

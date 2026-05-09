@@ -22,7 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.4.1 - Audit-Safe Redaction Suggestions`.
+- Versi saat ini: `v0.5.0 - Tabtion-Inspired UI Refresh`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.
