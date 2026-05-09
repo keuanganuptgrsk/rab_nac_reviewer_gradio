@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.4 - Manual Review Start - 2026-05-09
+
+- Pada sesi awal tab Upload hanya menampilkan upload file dan tombol `Run NAC Review`.
+- Tabel `Preview / Extracted Rows` disembunyikan dari UI utama.
+- Tabel hasil review disembunyikan sampai tombol `Run NAC Review` ditekan.
+- Auto-run saat upload dimatikan agar pengguna punya kontrol eksplisit kapan review dijalankan.
+
 ## v0.5.3 - Minimal Hero Header - 2026-05-09
 
 - Header utama hanya menampilkan nomor versi dan judul aplikasi.

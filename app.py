@@ -296,9 +296,15 @@ def _chunk_text(text, max_len=900):
 def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col):
     items, msg = build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col)
     if not items:
-        return pd.DataFrame(), [], msg
+        return gr.update(value=pd.DataFrame(), visible=False), [], msg, gr.update(value=pd.DataFrame(), visible=False)
     results = detect_items(items, db.get_settings())
-    return review_summary_dataframe(results), results, f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}"
+    summary = review_summary_dataframe(results)
+    return (
+        gr.update(value=summary, visible=True),
+        results,
+        f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
+        gr.update(value=summary, visible=True),
+    )
 
 
 def auto_run_review(upload_state):
@@ -577,14 +583,14 @@ def app():
             with gr.Tab("Upload RAB"):
                 file_in = gr.File(label="Upload RAB", file_types=[".xlsx", ".xls", ".csv", ".pdf", ".png", ".jpg", ".jpeg"])
                 upload_msg = gr.Markdown()
-                preview = gr.Dataframe(label="Preview / Extracted Rows")
+                preview = gr.Dataframe(label="Preview / Extracted Rows", visible=False)
                 text_cols = gr.Dropdown(label="Kolom teks untuk digabung dan direview", multiselect=True, visible=False)
                 volume_col = gr.Dropdown(label="Volume", visible=False)
                 unit_col = gr.Dropdown(label="Unit", visible=False)
                 unit_price_col = gr.Dropdown(label="Unit Price", visible=False)
                 total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
-                auto_results_df = gr.Dataframe(label="Hasil Review Otomatis - Confidence Sedang hingga Sangat Tinggi")
+                auto_results_df = gr.Dataframe(label="Hasil Review - Confidence Sedang hingga Sangat Tinggi", visible=False)
             with gr.Tab("Review Hasil"):
                 result_msg = gr.Markdown()
                 with gr.Row():
@@ -728,19 +734,11 @@ def app():
             handle_upload,
             file_in,
             [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
-        ).then(
-            auto_run_review,
-            upload_state,
-            [auto_results_df, results_state, result_msg],
-        ).then(
-            lambda results: review_summary_dataframe(results),
-            results_state,
-            results_df,
         )
-        run_btn.click(run_review, [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col], [auto_results_df, results_state, result_msg]).then(
-            lambda results: review_summary_dataframe(results),
-            results_state,
-            results_df,
+        run_btn.click(
+            run_review,
+            [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col],
+            [auto_results_df, results_state, result_msg, results_df],
         )
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)

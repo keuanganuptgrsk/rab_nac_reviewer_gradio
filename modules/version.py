@@ -1,8 +1,7 @@
-APP_VERSION = "0.5.3"
-APP_RELEASE_TITLE = "Minimal Hero Header"
+APP_VERSION = "0.5.4"
+APP_RELEASE_TITLE = "Manual Review Start"
 APP_RELEASE_NOTES = (
-    "Header utama dibuat lebih ringkas dengan hanya menampilkan nomor versi dan judul aplikasi, "
-    "tanpa keterangan rilis panjang di halaman utama."
+    "Tab Upload dibuat lebih bersih pada sesi awal: tabel preview dan hasil disembunyikan sampai pengguna menekan Run NAC Review."
 )
 
 
