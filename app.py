@@ -568,10 +568,8 @@ def app():
         gr.Markdown(
             f"""
 <section id="app-hero">
-  <div class="version-pill">Versi {APP_VERSION} - {APP_RELEASE_TITLE}</div>
+  <div class="version-pill">Versi {APP_VERSION}</div>
   <h1>RAB NAC Reviewer Copilot</h1>
-  <p>{APP_RELEASE_NOTES}</p>
-  <p class="disclaimer">Bukan Keputusan Final. {DISCLAIMER}</p>
 </section>
 """
         )

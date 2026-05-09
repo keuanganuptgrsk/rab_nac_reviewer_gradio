@@ -22,7 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.5.2 - Simplified Upload Flow`.
+- Versi saat ini: `v0.5.3 - Minimal Hero Header`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.

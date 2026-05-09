@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.3 - Minimal Hero Header - 2026-05-09
+
+- Header utama hanya menampilkan nomor versi dan judul aplikasi.
+- Menghilangkan keterangan rilis dan disclaimer panjang dari area hero agar tampilan lebih bersih.
+- Detail versi tetap tersedia di Settings dan `CHANGELOG.md`.
+
 ## v0.5.2 - Simplified Upload Flow - 2026-05-09
 
 - Menyembunyikan kontrol mapping kolom teknis pada tab Upload RAB.

@@ -1,8 +1,8 @@
-APP_VERSION = "0.5.2"
-APP_RELEASE_TITLE = "Simplified Upload Flow"
+APP_VERSION = "0.5.3"
+APP_RELEASE_TITLE = "Minimal Hero Header"
 APP_RELEASE_NOTES = (
-    "Kontrol mapping kolom upload disembunyikan agar alur review lebih sederhana: upload file, "
-    "preview data, lalu hasil NAC review otomatis langsung tampil."
+    "Header utama dibuat lebih ringkas dengan hanya menampilkan nomor versi dan judul aplikasi, "
+    "tanpa keterangan rilis panjang di halaman utama."
 )
 
 
