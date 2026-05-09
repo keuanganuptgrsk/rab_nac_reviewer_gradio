@@ -1,8 +1,8 @@
-APP_VERSION = "0.5.1"
-APP_RELEASE_TITLE = "Fluently-Inspired UI Refresh"
+APP_VERSION = "0.5.2"
+APP_RELEASE_TITLE = "Simplified Upload Flow"
 APP_RELEASE_NOTES = (
-    "Tampilan web diperbarui dengan gaya modern Fluently-inspired: aksen biru, primary navy, "
-    "background putih, font DM Sans, header high-energy, dan komponen workspace yang lebih rapi."
+    "Kontrol mapping kolom upload disembunyikan agar alur review lebih sederhana: upload file, "
+    "preview data, lalu hasil NAC review otomatis langsung tampil."
 )
 
 

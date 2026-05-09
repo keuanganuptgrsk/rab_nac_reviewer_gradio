@@ -580,12 +580,11 @@ def app():
                 file_in = gr.File(label="Upload RAB", file_types=[".xlsx", ".xls", ".csv", ".pdf", ".png", ".jpg", ".jpeg"])
                 upload_msg = gr.Markdown()
                 preview = gr.Dataframe(label="Preview / Extracted Rows")
-                text_cols = gr.Dropdown(label="Kolom teks untuk digabung dan direview", multiselect=True)
-                with gr.Row():
-                    volume_col = gr.Dropdown(label="Volume")
-                    unit_col = gr.Dropdown(label="Unit")
-                    unit_price_col = gr.Dropdown(label="Unit Price")
-                    total_price_col = gr.Dropdown(label="Total Price")
+                text_cols = gr.Dropdown(label="Kolom teks untuk digabung dan direview", multiselect=True, visible=False)
+                volume_col = gr.Dropdown(label="Volume", visible=False)
+                unit_col = gr.Dropdown(label="Unit", visible=False)
+                unit_price_col = gr.Dropdown(label="Unit Price", visible=False)
+                total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
                 auto_results_df = gr.Dataframe(label="Hasil Review Otomatis - Confidence Sedang hingga Sangat Tinggi")
             with gr.Tab("Review Hasil"):

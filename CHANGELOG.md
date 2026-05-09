@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.2 - Simplified Upload Flow - 2026-05-09
+
+- Menyembunyikan kontrol mapping kolom teknis pada tab Upload RAB.
+- Alur utama menjadi lebih sederhana: upload file, lihat preview, lalu hasil review otomatis tampil.
+- Logika auto-detect kolom tetap berjalan di backend untuk mendukung review dan export.
+
 ## v0.5.1 - Fluently-Inspired UI Refresh - 2026-05-09
 
 - Mengganti arah visual dari Tabtion-inspired ke Fluently-inspired sesuai design tokens yang diberikan.
