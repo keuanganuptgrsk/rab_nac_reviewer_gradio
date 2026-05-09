@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.3 - RAB Persekot Parser Support - 2026-05-09
+
+- Memperbaiki parser Excel untuk layout `RAB Persekot` yang memakai `No` di kolom pertama dan `Uraian Kegiatan` di kolom kedua.
+- Membaca sub-item tanpa nomor seperti `Makan & Minum` dan `Snack` sebagai item RAB tersendiri.
+- Mencegah section/group sebelumnya menempel ke item bernomor berikutnya agar mengurangi false positive.
+- Menambahkan keyword demo yang perlu validasi internal: `uang saku`, `honorarium`, `pulsa petugas`, dan `bantuan transport eksternal`.
+
 ## v0.6.2 - Finding Sort and Export Pack - 2026-05-09
 
 - Menyederhanakan arah sort menjadi `Tinggi ke rendah` dan `Rendah ke tinggi`.

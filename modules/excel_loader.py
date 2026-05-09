@@ -40,9 +40,14 @@ def load_rab_excel_items(file_path):
     rows = []
     for sheet_name, raw in sheets.items():
         sheet_upper = str(sheet_name).upper()
+        if "RESUME" in sheet_upper or "EXTRA" in sheet_upper:
+            continue
         if "REALISASI" in sheet_upper:
             rows.extend(_extract_realisasi_rows(raw, sheet_name, title))
         else:
+            rows.extend(_extract_rab_rows(raw, sheet_name, title))
+    if not rows:
+        for sheet_name, raw in sheets.items():
             rows.extend(_extract_rab_rows(raw, sheet_name, title))
     if not rows:
         return None
@@ -54,7 +59,8 @@ def _extract_title(sheets):
         for _, row in raw.iterrows():
             values = ["" if pd.isna(v) else str(v).strip() for v in row.tolist()]
             for idx, value in enumerate(values):
-                if value.lower() in ("nama pekerjaan", "judul pekerjaan", "pekerjaan"):
+                value_l = value.lower().strip()
+                if value_l in ("nama pekerjaan", "judul pekerjaan", "pekerjaan") or value_l.startswith(("pekerjaan", "pekerjaan :")):
                     for candidate in values[idx + 1 :]:
                         candidate = candidate.strip()
                         if candidate and candidate != ":":
@@ -65,30 +71,117 @@ def _extract_title(sheets):
 def _extract_rab_rows(raw, sheet_name, title):
     rows = []
     current_section = ""
+    active_group = ""
+    active_number = ""
+    child_index = 0
     for idx, row in raw.iterrows():
-        no = _cell(row, 1)
-        desc = _cell(row, 2)
-        if desc and not _is_number(no) and not _looks_like_header(desc):
-            current_section = desc
-        if not (_is_number(no) and desc and not _is_number(desc) and not _looks_like_header(desc)):
+        no, desc, layout = _detect_item_position(row)
+        if not desc or _is_number(desc) or _looks_like_header(desc):
             continue
-        total = _first_non_empty([_cell(row, 11), _cell(row, 10), _cell(row, 9)])
-        rows.append(
-            {
-                "row_id": str(len(rows) + 1),
-                "judul_rab": title,
-                "item_per_rab": desc,
-                "section": current_section,
-                "sheet": sheet_name,
-                "volume": _cell(row, 7),
-                "unit": _cell(row, 6),
-                "unit_price": _cell(row, 8),
-                "total_price": total,
-                "notes": "",
-                "review_text": " | ".join(x for x in [title, current_section, desc] if x),
-            }
-        )
+
+        unit = _unit_for_layout(row, layout)
+        volume = _volume_for_layout(row, layout)
+        unit_price = _unit_price_for_layout(row, layout)
+        total = _total_for_layout(row, layout)
+        is_group = _looks_like_section(desc, unit, volume, unit_price, total)
+
+        if _is_number(no):
+            row_id = _clean_number(no)
+            section = current_section
+            rows.append(
+                {
+                    "row_id": row_id,
+                    "judul_rab": title,
+                    "item_per_rab": desc,
+                    "section": section,
+                    "sheet": sheet_name,
+                    "volume": volume,
+                    "unit": unit,
+                    "unit_price": unit_price,
+                    "total_price": total,
+                    "notes": "",
+                    "review_text": " | ".join(x for x in [title, section, desc] if x),
+                }
+            )
+            active_number = row_id
+            child_index = 0
+            active_group = desc if is_group else ""
+            continue
+
+        if active_number and active_group and _has_detail(unit, volume, unit_price, total):
+            child_index += 1
+            row_id = f"{active_number}.{child_index}"
+            rows.append(
+                {
+                    "row_id": row_id,
+                    "judul_rab": title,
+                    "item_per_rab": desc,
+                    "section": active_group,
+                    "sheet": sheet_name,
+                    "volume": volume,
+                    "unit": unit,
+                    "unit_price": unit_price,
+                    "total_price": total,
+                    "notes": "",
+                    "review_text": " | ".join(x for x in [title, active_group, desc] if x),
+                }
+            )
+            continue
+
+        if desc:
+            current_section = desc
+            active_group = ""
+            active_number = ""
+            child_index = 0
     return rows
+
+
+def _detect_item_position(row):
+    if _is_number(_cell(row, 0)) and _cell(row, 1):
+        return _cell(row, 0), _cell(row, 1), "no0_desc1"
+    if _is_number(_cell(row, 1)) and _cell(row, 2):
+        return _cell(row, 1), _cell(row, 2), "no1_desc2"
+    if _cell(row, 1) and not _is_number(_cell(row, 1)) and not _is_number(_cell(row, 0)):
+        return "", _cell(row, 1), "no0_desc1"
+    if _cell(row, 2) and not _is_number(_cell(row, 2)) and not _is_number(_cell(row, 1)):
+        return "", _cell(row, 2), "no1_desc2"
+    return "", "", "unknown"
+
+
+def _unit_for_layout(row, layout):
+    return _cell(row, 2) if layout == "no0_desc1" else _cell(row, 6)
+
+
+def _volume_for_layout(row, layout):
+    return _cell(row, 3) if layout == "no0_desc1" else _cell(row, 7)
+
+
+def _unit_price_for_layout(row, layout):
+    return _first_non_empty([_cell(row, 4), _cell(row, 5)]) if layout == "no0_desc1" else _cell(row, 8)
+
+
+def _total_for_layout(row, layout):
+    if layout == "no0_desc1":
+        return _first_non_empty([_cell(row, 10), _cell(row, 6), _cell(row, 5)])
+    return _first_non_empty([_cell(row, 11), _cell(row, 10), _cell(row, 9)])
+
+
+def _clean_number(value):
+    text = str(value).strip()
+    return text[:-2] if text.endswith(".0") else text
+
+
+def _is_zeroish(value):
+    text = str(value or "").strip().replace(",", "").replace(".", "")
+    return text in ("", "0")
+
+
+def _has_detail(unit, volume, unit_price, total):
+    return bool(unit or volume or unit_price or not _is_zeroish(total))
+
+
+def _looks_like_section(desc, unit, volume, unit_price, total):
+    return bool(desc and not unit and not volume and not unit_price and _is_zeroish(total))
 
 
 def _extract_realisasi_rows(raw, sheet_name, title):
@@ -146,7 +239,15 @@ def _is_number(value):
 
 def _looks_like_header(text):
     lower = str(text).lower()
-    return any(token in lower for token in ["nama barang", "material", "jasa", "harga", "jumlah"])
+    header_tokens = [
+        "nama barang",
+        "nama material",
+        "uraian kegiatan",
+        "harga satuan",
+        "jumlah",
+        "satuan",
+    ]
+    return any(token in lower for token in header_tokens) and not lower.startswith("biaya ")
 
 
 def detect_columns(df):

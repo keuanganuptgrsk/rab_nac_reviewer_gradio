@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.2"
-APP_RELEASE_TITLE = "Finding Sort and Export Pack"
+APP_VERSION = "0.6.3"
+APP_RELEASE_TITLE = "RAB Persekot Parser Support"
 APP_RELEASE_NOTES = (
-    "Kontrol sort disederhanakan, tabel seluruh material RAB ditambahkan, dan export PDF/Excel tersedia untuk rangkuman serta seluruh material."
+    "Parser Excel kini membaca layout RAB Persekot dengan sub-item tanpa nomor, menjaga section agar tidak memicu false positive lintas item, dan menambah keyword demo operasional/personel."
 )
 
 

@@ -169,6 +169,10 @@ def ensure_demo_keywords():
         ("Pribadi/Hadiah", "cinderamata", "Cinderamata/souvenir; demo keyword perlu validasi", "DEMO", "medium", ["kenang-kenangan"]),
         ("Representasi", "fee narasumber", "Fee/honor narasumber; demo keyword perlu validasi", "DEMO", "medium", ["honor narasumber", "tambahan fee penceramah"]),
         ("Pegawai", "baju vip", "Pakaian non-teknis/VIP; demo keyword perlu validasi", "DEMO", "medium", ["seragam vip"]),
+        ("Personel/Operasional", "uang saku", "Uang saku/bantuan personal; demo keyword perlu validasi", "DEMO", "medium", ["bantuan uang saku"]),
+        ("Personel/Operasional", "honorarium", "Honorarium personel; demo keyword perlu validasi", "DEMO", "medium", ["honor", "fee narasumber"]),
+        ("Personel/Operasional", "pulsa petugas", "Pulsa/komunikasi personal; demo keyword perlu validasi", "DEMO", "medium", ["pulsa lapangan", "pulsa operator"]),
+        ("Transportasi/Personel", "bantuan transport eksternal", "Transport/bantuan eksternal; demo keyword perlu validasi", "DEMO", "medium", ["transport eksternal", "bantuan transport"]),
     ]
     with connect() as conn:
         for category, keyword, desc, ref, severity, synonyms in demo_keywords:
