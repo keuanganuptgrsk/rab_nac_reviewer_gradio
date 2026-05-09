@@ -2,6 +2,14 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.4 - Simple NAC Keyword Cards - 2026-05-09
+
+- Menyederhanakan tab `Database NAC` untuk user pemula.
+- Mengganti tabel database mentah menjadi search panel dan kartu keyword NAC.
+- Menampilkan sinonim/parafrasa sebagai chip yang dipakai sistem untuk review.
+- Menambahkan form sederhana untuk tambah keyword NAC tanpa pengaturan teknis seperti ID, weight, dan status.
+- Menambahkan import Excel keyword dari tab yang sama serta export database keyword.
+
 ## v0.6.3 - RAB Persekot Parser Support - 2026-05-09
 
 - Memperbaiki parser Excel untuk layout `RAB Persekot` yang memakai `No` di kolom pertama dan `Uraian Kegiatan` di kolom kedua.

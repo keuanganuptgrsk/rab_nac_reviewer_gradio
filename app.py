@@ -360,6 +360,163 @@ a {
     font-weight: 650;
 }
 
+.keyword-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.keyword-search-panel {
+    border: 2px solid #b7dcf5;
+    box-shadow: 0 0 0 5px rgba(186, 230, 253, 0.55);
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.keyword-search-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--rab-border);
+}
+
+.keyword-search-title {
+    color: var(--rab-primary);
+    font-weight: 800;
+    font-size: 20px;
+}
+
+.keyword-search-icon {
+    color: #94a3b8;
+    font-size: 22px;
+}
+
+.keyword-suggestion-strip {
+    padding: 14px 18px 18px;
+}
+
+.keyword-hint {
+    color: #9ca3af;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.keyword-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.keyword-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--rab-primary);
+}
+
+.chip-blue { background: #e0f2fe; }
+.chip-yellow { background: #fef3c7; }
+.chip-green { background: #dcfce7; }
+.chip-purple { background: #ede9fe; }
+.chip-red { background: #fee2e2; }
+
+.keyword-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.keyword-card {
+    border: 1px solid var(--rab-border);
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.keyword-card:hover {
+    border-color: rgba(22, 101, 214, 0.45);
+    box-shadow: 0 18px 42px rgba(22, 101, 214, 0.10);
+}
+
+.keyword-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.keyword-name {
+    color: var(--rab-primary);
+    font-size: 19px;
+    font-weight: 850;
+    line-height: 1.2;
+}
+
+.keyword-category {
+    color: var(--rab-secondary);
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.severity-badge {
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.severity-medium { background: #fef3c7; color: #92400e; }
+.severity-high { background: #ffedd5; color: #9a3412; }
+.severity-very-high { background: #fee2e2; color: #991b1b; }
+.severity-low, .severity-very-low { background: #e0f2fe; color: #075985; }
+
+.keyword-desc {
+    color: var(--rab-secondary);
+    font-size: 13px;
+    line-height: 1.45;
+    margin-top: 10px;
+}
+
+.alias-label {
+    color: var(--rab-primary);
+    font-size: 12px;
+    font-weight: 800;
+    margin: 14px 0 8px;
+}
+
+.alias-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.alias-chip {
+    border-radius: 999px;
+    padding: 6px 9px;
+    background: var(--rab-accent-soft);
+    color: var(--rab-accent);
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.simple-note {
+    border: 1px solid var(--rab-border);
+    background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: var(--rab-secondary);
+    font-weight: 650;
+}
+
 @media (max-width: 820px) {
     .finding-card {
         grid-template-columns: 58px 1fr;
@@ -695,20 +852,20 @@ def save_row_feedback(results, row_id, feedback_type, redaction, notes):
 def approve_suggested_synonym(results, row_id, weight):
     frame = pd.DataFrame(results or [])
     if frame.empty or not row_id:
-        return "Pilih row_id yang memiliki suggested synonym.", refresh_synonyms()
+        return "Pilih row_id yang memiliki suggested synonym.", render_keyword_cards("")
     row = frame[frame["row_id"].astype(str) == str(row_id)]
     if row.empty:
-        return "row_id tidak ditemukan.", refresh_synonyms()
+        return "row_id tidak ditemukan.", render_keyword_cards("")
     rec = row.iloc[0].to_dict()
     candidate = str(rec.get("suggested_synonym_candidate", "") or "").strip()
     keyword = str(rec.get("suggested_synonym_for_keyword", "") or rec.get("matched_keyword", "") or "").strip()
     if not candidate or not keyword:
-        return "Baris ini belum memiliki kandidat sinonim dari model.", refresh_synonyms()
+        return "Baris ini belum memiliki kandidat sinonim dari model.", render_keyword_cards("")
     keyword_row = db.get_keyword_by_text(keyword)
     if not keyword_row:
-        return f"Keyword induk tidak ditemukan: {keyword}", refresh_synonyms()
+        return f"Keyword induk tidak ditemukan: {keyword}", render_keyword_cards("")
     if db.synonym_exists(keyword_row["id"], candidate):
-        return "Sinonim sudah ada di database.", refresh_synonyms()
+        return "Sinonim sudah ada di database.", render_keyword_cards(keyword)
     db.add_synonym(keyword_row["id"], candidate, float(weight or 0.85), "active")
     db.save_feedback(
         row_id,
@@ -718,7 +875,7 @@ def approve_suggested_synonym(results, row_id, weight):
         candidate,
         "Approved model-suggested synonym",
     )
-    return f"Sinonim '{candidate}' ditambahkan untuk keyword '{keyword}'.", refresh_synonyms()
+    return f"Sinonim '{candidate}' ditambahkan untuk keyword '{keyword}'.", render_keyword_cards(keyword)
 
 
 def add_keyword_ui(category, keyword, description, reference, severity, status, notes):
@@ -791,6 +948,140 @@ def refresh_allowable():
 
 def refresh_exceptions():
     return pd.DataFrame(db.get_exceptions(False))
+
+
+def _auto_aliases(keyword):
+    base = str(keyword or "").strip().lower()
+    if not base:
+        return []
+    variants = []
+    if not base.startswith("biaya "):
+        variants.append(f"biaya {base}")
+    if " " in base:
+        variants.append(base.replace("biaya ", ""))
+    if "honorarium" in base:
+        variants.extend(["honor", "fee"])
+    if "konsumsi" in base:
+        variants.extend(["makan minum", "jamuan", "snack"])
+    if "transport" in base:
+        variants.extend(["transportasi", "bantuan transport"])
+    cleaned = []
+    for item in variants:
+        item = item.strip()
+        if item and item != base and item not in cleaned:
+            cleaned.append(item)
+    return cleaned[:5]
+
+
+def add_keyword_simple_ui(keyword, category, severity, notes):
+    keyword = str(keyword or "").strip()
+    if not keyword:
+        return "Isi nama keyword NAC terlebih dahulu.", render_keyword_cards("")
+    existing = db.get_keyword_by_text(keyword)
+    if existing:
+        return f"Keyword '{keyword}' sudah ada.", render_keyword_cards(keyword)
+    keyword_id = db.add_keyword(
+        category or "Umum",
+        keyword,
+        f"Keyword ditambahkan dari UI sederhana; wajib validasi PMK/internal.",
+        "USER",
+        severity or "medium",
+        "active",
+        notes or "",
+    )
+    aliases = _auto_aliases(keyword)
+    for alias in aliases:
+        if not db.synonym_exists(keyword_id, alias):
+            db.add_synonym(keyword_id, alias, 0.85, "active")
+    msg = f"Keyword '{keyword}' ditambahkan."
+    if aliases:
+        msg += " Sistem menambahkan kandidat sinonim/parafrasa otomatis: " + ", ".join(aliases) + "."
+    return msg, render_keyword_cards(keyword)
+
+
+def import_keywords_simple_ui(file_obj):
+    if file_obj is None:
+        return "Upload file Excel keyword dahulu.", render_keyword_cards("")
+    try:
+        count = import_keywords_from_excel(_file_path(file_obj))
+    except Exception as exc:
+        return f"Import gagal: {exc}", render_keyword_cards("")
+    return f"{count} keyword berhasil diimpor dari Excel.", render_keyword_cards("")
+
+
+def render_keyword_cards(query=""):
+    query_l = str(query or "").strip().lower()
+    keywords = db.get_keywords(False)
+    synonyms = db.get_synonyms(False)
+    aliases_by_keyword = {}
+    for syn in synonyms:
+        aliases_by_keyword.setdefault(syn.get("nac_keyword_id"), []).append(syn.get("synonym", ""))
+
+    if query_l:
+        filtered = []
+        for row in keywords:
+            haystack = " ".join(
+                [
+                    str(row.get("keyword", "")),
+                    str(row.get("category", "")),
+                    str(row.get("description", "")),
+                    " ".join(aliases_by_keyword.get(row.get("id"), [])),
+                ]
+            ).lower()
+            if query_l in haystack:
+                filtered.append(row)
+        keywords = filtered
+
+    active_count = sum(1 for row in keywords if row.get("status") == "active")
+    top_keywords = keywords[:7]
+    chip_colors = ["chip-blue", "chip-yellow", "chip-green", "chip-purple", "chip-red"]
+    chips = "".join(
+        f"<span class='keyword-chip {chip_colors[i % len(chip_colors)]}'>{html.escape(str(row.get('keyword', '')))}</span>"
+        for i, row in enumerate(top_keywords)
+    )
+    cards = []
+    for row in keywords:
+        severity = str(row.get("severity") or "medium").replace("_", "-")
+        aliases = aliases_by_keyword.get(row.get("id"), [])
+        alias_html = "".join(f"<span class='alias-chip'>{html.escape(str(alias))}</span>" for alias in aliases[:8])
+        if not alias_html:
+            alias_html = "<span class='alias-chip'>semantic/fuzzy otomatis</span>"
+        desc = html.escape(str(row.get("description") or "Keyword demo/user; wajib divalidasi reviewer."))
+        status = html.escape(str(row.get("status") or "active"))
+        cards.append(
+            "<div class='keyword-card'>"
+            "<div class='keyword-card-top'>"
+            "<div>"
+            f"<div class='keyword-name'>{html.escape(str(row.get('keyword', '')))}</div>"
+            f"<div class='keyword-category'>{html.escape(str(row.get('category', 'Umum')))} | {status}</div>"
+            "</div>"
+            f"<span class='severity-badge severity-{severity}'>{html.escape(str(row.get('severity', 'medium')))}</span>"
+            "</div>"
+            f"<div class='keyword-desc'>{desc}</div>"
+            "<div class='alias-label'>Sinonim/parafrasa yang dipakai sistem</div>"
+            f"<div class='alias-row'>{alias_html}</div>"
+            "</div>"
+        )
+
+    if not cards:
+        cards.append("<div class='empty-findings'>Tidak ada keyword yang cocok dengan pencarian.</div>")
+
+    return (
+        "<div class='keyword-workspace'>"
+        "<div class='keyword-search-panel'>"
+        "<div class='keyword-search-head'>"
+        f"<div class='keyword-search-title'>{html.escape(query or 'Keyword NAC')}</div>"
+        "<div class='keyword-search-icon'>Search</div>"
+        "</div>"
+        "<div class='keyword-suggestion-strip'>"
+        "<div class='keyword-hint'>Suggested Keywords: keyword NAC aktif yang akan dipakai sistem saat review</div>"
+        f"<div class='keyword-chip-row'>{chips}</div>"
+        "</div>"
+        "</div>"
+        f"<div class='simple-note'>{len(keywords)} keyword ditampilkan, {active_count} aktif. Sistem juga memakai fuzzy matching dan semantic similarity jika fitur semantic di Settings aktif, sehingga user tidak perlu memasukkan semua parafrasa secara manual.</div>"
+        f"<div class='keyword-card-grid'>{''.join(cards)}</div>"
+        "</div>"
+    )
 
 
 def import_keywords_ui(file_obj):
@@ -945,61 +1236,23 @@ def app():
                     approve_syn_btn = gr.Button("Approve Suggested Synonym")
                 approve_syn_msg = gr.Markdown()
             with gr.Tab("Database NAC"):
-                gr.Markdown("Seed database bersifat demo dan wajib divalidasi dengan PMK/kebijakan internal.")
-                kw_table = gr.Dataframe(value=refresh_keywords(), label="NAC Keywords")
-                with gr.Row():
-                    kw_cat = gr.Textbox(label="Category")
-                    kw_text = gr.Textbox(label="Tambah Keyword NAC")
-                    kw_sev = gr.Dropdown(["very_low", "low", "medium", "high", "very_high"], value="medium", label="Severity")
-                    kw_status = gr.Dropdown(["active", "inactive", "deprecated", "needs_review"], value="active", label="Status")
-                kw_desc = gr.Textbox(label="Description")
-                kw_ref = gr.Textbox(label="Reference")
-                kw_notes = gr.Textbox(label="Notes")
-                add_kw = gr.Button("Tambah Keyword NAC")
+                gr.Markdown("Kelola keyword NAC dengan cara sederhana. Seed database bersifat demo dan wajib divalidasi dengan PMK/kebijakan internal.")
+                keyword_search = gr.Textbox(label="Cari keyword NAC", placeholder="Contoh: konsumsi, honorarium, transport, hadiah")
+                keyword_cards = gr.HTML(value=render_keyword_cards(""))
+                with gr.Accordion("Tambah keyword NAC", open=False):
+                    simple_kw = gr.Textbox(label="Keyword NAC", placeholder="Contoh: uang saku, honorarium, biaya representasi")
+                    with gr.Row():
+                        simple_cat = gr.Textbox(label="Kategori", value="Umum")
+                        simple_sev = gr.Dropdown(["very_low", "low", "medium", "high", "very_high"], value="medium", label="Confidence dasar")
+                    simple_notes = gr.Textbox(label="Catatan validasi", placeholder="Opsional: dasar internal/PMK, konteks, atau catatan reviewer")
+                    simple_add_btn = gr.Button("Tambah Keyword NAC", variant="primary")
+                with gr.Accordion("Upload Excel keyword NAC", open=False):
+                    gr.Markdown("Kolom minimal: `category` dan `keyword`. Opsional: `synonyms`, `description`, `reference`, `severity`, `status`, `notes`. Sinonim dipisahkan dengan titik koma.")
+                    import_file = gr.File(label="Upload Excel Keyword NAC", file_types=[".xlsx"])
+                    import_btn = gr.Button("Import Keyword dari Excel")
+                    export_kw_btn = gr.Button("Export Database Keyword")
+                    export_kw_file = gr.File(label="Download Keyword DB")
                 kw_msg = gr.Markdown()
-                with gr.Row():
-                    kw_status_id = gr.Number(label="Keyword ID untuk update status", precision=0)
-                    kw_status_new = gr.Dropdown(["active", "inactive", "deprecated", "needs_review"], value="inactive", label="Status baru")
-                    kw_status_btn = gr.Button("Update Status Keyword")
-                syn_table = gr.Dataframe(value=refresh_synonyms(), label="Sinonim")
-                with gr.Row():
-                    syn_parent = gr.Dropdown(choices=[str(r["id"]) for r in db.get_keywords(False)], label="Keyword ID")
-                    syn_text = gr.Textbox(label="Tambah Sinonim")
-                    syn_weight = gr.Number(value=0.9, label="Weight")
-                add_syn = gr.Button("Tambah Sinonim")
-                syn_msg = gr.Markdown()
-                with gr.Row():
-                    syn_status_id = gr.Number(label="Synonym ID untuk update status", precision=0)
-                    syn_status_new = gr.Dropdown(["active", "inactive", "deprecated", "needs_review"], value="inactive", label="Status baru")
-                    syn_status_btn = gr.Button("Update Status Synonym")
-                allow_table = gr.Dataframe(value=refresh_allowable(), label="Allowable Keywords")
-                with gr.Row():
-                    allow_cat = gr.Textbox(label="Category", value="Teknis")
-                    allow_kw = gr.Textbox(label="Add Allowable Keyword")
-                allow_desc = gr.Textbox(label="Description")
-                add_allow = gr.Button("Tambah Allowable")
-                allow_msg = gr.Markdown()
-                with gr.Row():
-                    allow_status_id = gr.Number(label="Allowable ID untuk update status", precision=0)
-                    allow_status_new = gr.Dropdown(["active", "inactive", "deprecated", "needs_review"], value="inactive", label="Status baru")
-                    allow_status_btn = gr.Button("Update Status Allowable")
-                exc_table = gr.Dataframe(value=refresh_exceptions(), label="Exceptions")
-                with gr.Row():
-                    exc_parent = gr.Dropdown(choices=[""] + [str(r["id"]) for r in db.get_keywords(False)], label="NAC Keyword ID nullable")
-                    exc_pattern = gr.Textbox(label="Tambah Exception")
-                    exc_action = gr.Dropdown(["lower_confidence", "ignore", "manual_review"], value="lower_confidence", label="Action")
-                    exc_adjust = gr.Number(value=25, label="Weight Adjustment")
-                exc_reason = gr.Textbox(label="Reason")
-                add_exc = gr.Button("Tambah Exception")
-                exc_msg = gr.Markdown()
-                with gr.Row():
-                    exc_status_id = gr.Number(label="Exception ID untuk update status", precision=0)
-                    exc_status_new = gr.Dropdown(["active", "inactive", "deprecated", "needs_review"], value="inactive", label="Status baru")
-                    exc_status_btn = gr.Button("Update Status Exception")
-                import_file = gr.File(label="Import NAC keyword database from Excel", file_types=[".xlsx"])
-                import_btn = gr.Button("Import")
-                export_kw_btn = gr.Button("Export NAC keyword database")
-                export_kw_file = gr.File(label="Download Keyword DB")
             with gr.Tab("Feedback & Learning"):
                 learn_btn = gr.Button("Refresh Learning Dashboard")
                 fp = gr.Dataframe(label="Most Common False Positives")
@@ -1084,16 +1337,10 @@ def app():
         for control in [label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only]:
             control.change(filter_results, [results_state, label_filter, category_filter, match_filter, keyword_filter, medium_high, manual_only], results_df)
         fb_btn.click(save_row_feedback, [results_state, fb_row, fb_type, fb_redaction, fb_notes], fb_msg)
-        approve_syn_btn.click(approve_suggested_synonym, [results_state, syn_row, syn_approve_weight], [approve_syn_msg, syn_table])
-        add_kw.click(add_keyword_ui, [kw_cat, kw_text, kw_desc, kw_ref, kw_sev, kw_status, kw_notes], [kw_msg, kw_table])
-        add_syn.click(add_synonym_ui, [syn_parent, syn_text, syn_weight], [syn_msg, syn_table])
-        kw_status_btn.click(update_keyword_status_ui, [kw_status_id, kw_status_new], [kw_msg, kw_table])
-        syn_status_btn.click(update_synonym_status_ui, [syn_status_id, syn_status_new], [syn_msg, syn_table])
-        add_allow.click(add_allowable_ui, [allow_cat, allow_kw, allow_desc], [allow_msg, allow_table])
-        allow_status_btn.click(update_allowable_status_ui, [allow_status_id, allow_status_new], [allow_msg, allow_table])
-        add_exc.click(add_exception_ui, [exc_parent, exc_pattern, exc_reason, exc_action, exc_adjust], [exc_msg, exc_table])
-        exc_status_btn.click(update_exception_status_ui, [exc_status_id, exc_status_new], [exc_msg, exc_table])
-        import_btn.click(import_keywords_ui, import_file, [kw_msg, kw_table])
+        approve_syn_btn.click(approve_suggested_synonym, [results_state, syn_row, syn_approve_weight], [approve_syn_msg, keyword_cards])
+        keyword_search.change(render_keyword_cards, keyword_search, keyword_cards)
+        simple_add_btn.click(add_keyword_simple_ui, [simple_kw, simple_cat, simple_sev, simple_notes], [kw_msg, keyword_cards])
+        import_btn.click(import_keywords_simple_ui, import_file, [kw_msg, keyword_cards])
         export_kw_btn.click(export_keywords_ui, outputs=export_kw_file)
         learn_btn.click(learning_ui, outputs=[fp, fn, sug_kw, sug_syn, model_syn, sug_exc, fb_hist])
         export_btn.click(export_review_ui, results_state, export_file)
