@@ -105,6 +105,30 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3 {
     border-bottom: 1px solid var(--rab-border) !important;
 }
 
+.tab-nav,
+div[role="tablist"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 4px !important;
+    scrollbar-width: thin;
+}
+
+.tab-nav button,
+div[role="tablist"] button,
+button[role="tab"] {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+}
+
+button[aria-label="More"],
+button[title="More"],
+.tab-nav button[aria-label="More"],
+.tab-nav button[title="More"] {
+    display: none !important;
+}
+
 .tab-nav button,
 .tabs button {
     font-family: "DM Sans", Inter, sans-serif !important;

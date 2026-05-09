@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.5.5 - Stable Tab Bar - 2026-05-09
+
+- Menjaga tab navigasi tetap horizontal dan tidak berubah menjadi menu titik tiga.
+- Menambahkan horizontal scroll untuk tab saat ruang layar sempit.
+- Mengurangi pergeseran layout pada area navigasi utama.
+
 ## v0.5.4 - Manual Review Start - 2026-05-09
 
 - Pada sesi awal tab Upload hanya menampilkan upload file dan tombol `Run NAC Review`.
