@@ -1,5 +1,4 @@
 gradio
-pyaudioop
 pandas
 openpyxl
 xlrd
