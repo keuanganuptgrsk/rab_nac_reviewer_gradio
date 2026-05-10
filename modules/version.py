@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.6"
-APP_RELEASE_TITLE = "Cleaner Upload and Keyword Delete"
+APP_VERSION = "0.6.7"
+APP_RELEASE_TITLE = "Doodle UI and Card Delete"
 APP_RELEASE_NOTES = (
-    "Keyword NAC dapat dihapus dari daftar aktif, sort/export disembunyikan sebelum review, tombol download diringkas tanpa panel file besar, dan layout tab dibuat lebih stabil."
+    "UI diganti ke gaya doodle, layout tab dibuat lebih konsisten, keyword bisa dihapus langsung dari card, dan PaddleOCR diprioritaskan sebagai OCR optional."
 )
 
 

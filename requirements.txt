@@ -13,3 +13,6 @@ pillow
 Sastrawi
 plotly
 reportlab
+# Optional OCR for scanned PDFs/images. Heavy, but used automatically if installed.
+# paddleocr
+# paddlepaddle

@@ -2,6 +2,14 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.7 - Doodle UI and Card Delete - 2026-05-10
+
+- Mengubah UI ke arah doodle/sketch-inspired dengan border tebal, shadow offset, dan font Delius Swash Caps.
+- Menstabilkan layout antar tab dengan panel height dan sticky tab bar.
+- Menghapus form/dropdown `Hapus keyword NAC` dari Database NAC.
+- Menambahkan tombol hapus langsung di setiap card keyword NAC.
+- Memprioritaskan PaddleOCR sebagai OCR optional saat mode OCR `auto`, dengan fallback ke EasyOCR dan Tesseract.
+
 ## v0.6.6 - Cleaner Upload and Keyword Delete - 2026-05-09
 
 - Menambahkan fitur hapus keyword NAC dari daftar aktif dengan soft-delete `inactive`.

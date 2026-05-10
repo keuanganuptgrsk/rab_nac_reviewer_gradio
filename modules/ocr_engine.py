@@ -12,14 +12,36 @@ def _easyocr_text(image_path):
 def _paddleocr_text(image_path):
     from paddleocr import PaddleOCR
 
-    ocr = PaddleOCR(use_angle_cls=True, lang="en", show_log=False)
+    ocr = _build_paddleocr()
     result = ocr.ocr(str(image_path), cls=True)
     lines = []
     for page in result or []:
+        if isinstance(page, dict):
+            texts = page.get("rec_texts") or page.get("texts") or []
+            lines.extend(str(text) for text in texts if text)
+            continue
         for item in page or []:
             if item and len(item) > 1:
-                lines.append(item[1][0])
+                lines.append(str(item[1][0]))
     return "\n".join(lines)
+
+
+def _build_paddleocr():
+    from paddleocr import PaddleOCR
+
+    attempts = [
+        {"use_angle_cls": True, "lang": "latin", "show_log": False},
+        {"use_angle_cls": True, "lang": "en", "show_log": False},
+        {"lang": "latin"},
+        {"lang": "en"},
+    ]
+    last_error = None
+    for kwargs in attempts:
+        try:
+            return PaddleOCR(**kwargs)
+        except Exception as exc:
+            last_error = exc
+    raise last_error
 
 
 def _tesseract_text(image_path):
@@ -32,7 +54,7 @@ def _tesseract_text(image_path):
 def extract_text_from_image(image_path, mode="auto"):
     path = Path(image_path)
     errors = []
-    engines = ["easyocr", "paddleocr", "tesseract"] if mode in ("auto", "", None) else [mode]
+    engines = ["paddleocr", "easyocr", "tesseract"] if mode in ("auto", "", None) else [mode]
     for engine in engines:
         if engine == "disabled":
             return "", "OCR dinonaktifkan."
@@ -73,4 +95,3 @@ def extract_text_from_pdf_scan(pdf_path, mode="auto", max_pages=5):
             except Exception:
                 pass
     return "\n".join(texts), " ".join(notes)
-

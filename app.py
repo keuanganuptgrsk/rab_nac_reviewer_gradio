@@ -30,26 +30,33 @@ BASE_DIR = Path(__file__).resolve().parent
 db.init_db()
 
 FLUENTLY_THEME_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Delius+Swash+Caps&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
 
 :root {
     --rab-bg: #ffffff;
-    --rab-primary: #0b1220;
-    --rab-secondary: #475569;
-    --rab-accent: #1665d6;
-    --rab-text: #0b1220;
-    --rab-heading: #1665d6;
+    --rab-primary: #263d5b;
+    --rab-secondary: #4b637f;
+    --rab-accent: #49b6e5;
+    --rab-success: #16a34a;
+    --rab-warning: #d97706;
+    --rab-danger: #dc2626;
+    --rab-text: #111827;
+    --rab-heading: #263d5b;
     --rab-muted: #64748b;
-    --rab-border: #dbe7f7;
-    --rab-soft: #f8fbff;
-    --rab-accent-soft: #eef6ff;
+    --rab-border: #263d5b;
+    --rab-soft: #f6fbff;
+    --rab-accent-soft: #e7f7fd;
+    --rab-paper: #fffef8;
 }
 
 body,
 .gradio-container {
-    background: var(--rab-bg) !important;
+    background:
+        radial-gradient(circle at 10% 12%, rgba(73, 182, 229, 0.12), transparent 25%),
+        radial-gradient(circle at 88% 8%, rgba(217, 119, 6, 0.10), transparent 22%),
+        linear-gradient(180deg, #ffffff 0%, #f8fcff 100%) !important;
     color: var(--rab-text) !important;
-    font-family: "DM Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
 }
 
 .gradio-container {
@@ -59,20 +66,20 @@ body,
 }
 
 h1, h2, h3, .prose h1, .prose h2, .prose h3 {
-    font-family: "DM Sans", Inter, sans-serif !important;
+    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
     color: var(--rab-heading) !important;
     letter-spacing: 0 !important;
 }
 
 #app-hero {
     background:
-        radial-gradient(circle at 82% 18%, rgba(22, 101, 214, 0.16), transparent 32%),
-        linear-gradient(135deg, #ffffff 0%, #f8fbff 48%, #eef6ff 100%);
-    border: 1px solid var(--rab-border);
-    border-radius: 8px;
+        linear-gradient(135deg, rgba(73, 182, 229, 0.20) 0%, rgba(255, 255, 255, 0.92) 52%, rgba(255, 246, 218, 0.92) 100%);
+    border: 3px solid var(--rab-border);
+    border-radius: 18px 22px 16px 24px;
     padding: 30px 32px;
     margin-bottom: 18px;
-    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
+    box-shadow: 8px 8px 0 rgba(38, 61, 91, 0.16);
+    transform: rotate(-0.15deg);
 }
 
 #app-hero h1 {
@@ -96,7 +103,7 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3 {
     color: #ffffff;
     background: var(--rab-primary);
     border: 1px solid #1e293b;
-    border-radius: 999px;
+    border-radius: 999px 900px 999px 840px;
     padding: 8px 13px;
     font-size: 13px;
     font-weight: 800;
@@ -109,11 +116,16 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3 {
 }
 
 .tabs {
-    border-bottom: 1px solid var(--rab-border) !important;
+    border-bottom: 3px solid var(--rab-border) !important;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
 }
 
 div[role="tabpanel"] {
-    min-height: 720px;
+    min-height: 780px;
     padding-top: 18px;
 }
 
@@ -143,7 +155,7 @@ button[title="More"],
 
 .tab-nav button,
 .tabs button {
-    font-family: "DM Sans", Inter, sans-serif !important;
+    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
     font-weight: 650 !important;
     color: var(--rab-muted) !important;
     border-radius: 8px 8px 0 0 !important;
@@ -159,20 +171,21 @@ button.primary,
 .primary > button,
 button[variant="primary"] {
     background: var(--rab-accent) !important;
-    border-color: var(--rab-accent) !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
+    border: 3px solid var(--rab-primary) !important;
+    color: var(--rab-primary) !important;
+    border-radius: 13px 17px 12px 18px !important;
     font-weight: 700 !important;
+    box-shadow: 5px 5px 0 rgba(38, 61, 91, 0.22) !important;
 }
 
 button {
-    border-radius: 8px !important;
-    font-family: "DM Sans", Inter, sans-serif !important;
+    border-radius: 13px 17px 12px 18px !important;
+    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
     font-weight: 700 !important;
 }
 
 .form, .panel, .block, .wrap, .container {
-    border-radius: 8px !important;
+    border-radius: 18px 16px 22px 14px !important;
 }
 
 label, .label-wrap span {
@@ -181,17 +194,18 @@ label, .label-wrap span {
 }
 
 input, textarea, select {
-    border-color: var(--rab-border) !important;
-    border-radius: 8px !important;
+    border: 3px solid var(--rab-border) !important;
+    border-radius: 16px 13px 18px 12px !important;
+    background: var(--rab-paper) !important;
 }
 
 .dataframe, .table-wrap {
-    border-radius: 8px !important;
+    border-radius: 18px 14px 20px 16px !important;
     border-color: var(--rab-border) !important;
 }
 
 table {
-    font-family: "Geist", Inter, sans-serif !important;
+    font-family: "JetBrains Mono", ui-monospace, monospace !important;
 }
 
 th {
@@ -261,10 +275,11 @@ a {
     align-items: center;
     gap: 16px;
     padding: 16px;
-    border: 1px solid var(--rab-border);
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+    border: 3px solid var(--rab-border);
+    background: var(--rab-paper);
+    border-radius: 18px 14px 22px 16px;
+    box-shadow: 6px 6px 0 rgba(38, 61, 91, 0.15);
+    transform: rotate(-0.08deg);
 }
 
 .finding-card:hover {
@@ -278,7 +293,7 @@ a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 13px 17px 12px 18px;
     background: var(--rab-accent-soft);
     color: var(--rab-accent);
     font-weight: 800;
@@ -372,10 +387,10 @@ a {
 }
 
 .keyword-search-panel {
-    border: 2px solid #b7dcf5;
-    box-shadow: 0 0 0 5px rgba(186, 230, 253, 0.55);
-    background: #ffffff;
-    border-radius: 8px;
+    border: 3px solid var(--rab-border);
+    box-shadow: 7px 7px 0 rgba(73, 182, 229, 0.20);
+    background: var(--rab-paper);
+    border-radius: 18px 14px 22px 16px;
     overflow: hidden;
 }
 
@@ -418,7 +433,8 @@ a {
 .keyword-chip {
     display: inline-flex;
     align-items: center;
-    border-radius: 8px;
+    border: 2px solid rgba(38, 61, 91, 0.22);
+    border-radius: 13px 17px 12px 18px;
     padding: 9px 14px;
     font-size: 15px;
     font-weight: 800;
@@ -438,16 +454,18 @@ a {
 }
 
 .keyword-card {
-    border: 1px solid var(--rab-border);
-    background: #ffffff;
-    border-radius: 8px;
+    border: 3px solid var(--rab-border);
+    background: var(--rab-paper);
+    border-radius: 18px 14px 22px 16px;
     padding: 16px;
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+    box-shadow: 7px 7px 0 rgba(38, 61, 91, 0.12);
+    transform: rotate(-0.12deg);
 }
 
 .keyword-card:hover {
-    border-color: rgba(22, 101, 214, 0.45);
-    box-shadow: 0 18px 42px rgba(22, 101, 214, 0.10);
+    border-color: var(--rab-accent);
+    box-shadow: 9px 9px 0 rgba(73, 182, 229, 0.24);
+    transform: translate(-2px, -2px) rotate(0.08deg);
 }
 
 .keyword-card-top {
@@ -472,7 +490,8 @@ a {
 }
 
 .severity-badge {
-    border-radius: 999px;
+    border: 2px solid rgba(38, 61, 91, 0.22);
+    border-radius: 999px 880px 940px 840px;
     padding: 7px 10px;
     font-size: 12px;
     font-weight: 850;
@@ -505,12 +524,41 @@ a {
 }
 
 .alias-chip {
-    border-radius: 999px;
+    border: 2px solid rgba(73, 182, 229, 0.30);
+    border-radius: 999px 880px 940px 840px;
     padding: 6px 9px;
     background: var(--rab-accent-soft);
     color: var(--rab-accent);
     font-size: 12px;
     font-weight: 750;
+}
+
+.keyword-delete-btn {
+    width: 100%;
+    margin-top: 14px;
+    border: 3px solid var(--rab-danger);
+    background: #fff1f2;
+    color: #991b1b;
+    border-radius: 13px 17px 12px 18px;
+    padding: 9px 12px;
+    font-family: "Delius Swash Caps", "Comic Sans MS", cursive;
+    font-weight: 850;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 rgba(220, 38, 38, 0.18);
+}
+
+.keyword-delete-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0 rgba(220, 38, 38, 0.22);
+}
+
+.hidden-delete-control {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .simple-note {
@@ -1133,10 +1181,10 @@ def _infer_keyword_metadata(keyword):
 def add_keyword_simple_ui(keyword):
     keyword = str(keyword or "").strip()
     if not keyword:
-        return "Isi nama keyword NAC terlebih dahulu.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
+        return "Isi nama keyword NAC terlebih dahulu.", render_keyword_cards(""), ""
     existing = db.get_keyword_by_text(keyword)
     if existing:
-        return f"Keyword '{keyword}' sudah ada.", render_keyword_cards(keyword), gr.update(choices=keyword_delete_choices(), value=None)
+        return f"Keyword '{keyword}' sudah ada.", render_keyword_cards(keyword), ""
     category, severity, notes = _infer_keyword_metadata(keyword)
     keyword_id = db.add_keyword(
         category,
@@ -1154,7 +1202,7 @@ def add_keyword_simple_ui(keyword):
     msg = f"Keyword '{keyword}' ditambahkan."
     if aliases:
         msg += " Sistem menambahkan kandidat sinonim/parafrasa otomatis: " + ", ".join(aliases) + "."
-    return msg, render_keyword_cards(keyword), gr.update(choices=keyword_delete_choices(), value=None)
+    return msg, render_keyword_cards(keyword), ""
 
 
 def keyword_delete_choices():
@@ -1172,14 +1220,25 @@ def delete_keyword_simple_ui(selection):
     return "Keyword dihapus dari daftar aktif. Data tidak dihapus permanen agar tetap audit-friendly.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
 
 
+def delete_keyword_by_id_ui(keyword_id):
+    keyword_id = str(keyword_id or "").strip()
+    if not keyword_id:
+        return "", render_keyword_cards("")
+    try:
+        db.update_keyword_status(int(keyword_id), "inactive")
+    except Exception as exc:
+        return f"Gagal menghapus keyword: {exc}", render_keyword_cards("")
+    return "Keyword dihapus dari daftar aktif. Data tidak dihapus permanen agar tetap audit-friendly.", render_keyword_cards("")
+
+
 def import_keywords_simple_ui(file_obj):
     if file_obj is None:
-        return "Upload file Excel keyword dahulu.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
+        return "Upload file Excel keyword dahulu.", render_keyword_cards(""), ""
     try:
         count = import_keywords_from_excel(_file_path(file_obj))
     except Exception as exc:
-        return f"Import gagal: {exc}", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
-    return f"{count} keyword berhasil diimpor dari Excel.", render_keyword_cards(""), gr.update(choices=keyword_delete_choices(), value=None)
+        return f"Import gagal: {exc}", render_keyword_cards(""), ""
+    return f"{count} keyword berhasil diimpor dari Excel.", render_keyword_cards(""), ""
 
 
 def render_keyword_cards(query=""):
@@ -1221,6 +1280,7 @@ def render_keyword_cards(query=""):
             alias_html = "<span class='alias-chip'>semantic/fuzzy otomatis</span>"
         desc = html.escape(str(row.get("description") or "Keyword demo/user; wajib divalidasi reviewer."))
         status = html.escape(str(row.get("status") or "active"))
+        keyword_id = html.escape(str(row.get("id") or ""))
         cards.append(
             "<div class='keyword-card'>"
             "<div class='keyword-card-top'>"
@@ -1233,6 +1293,7 @@ def render_keyword_cards(query=""):
             f"<div class='keyword-desc'>{desc}</div>"
             "<div class='alias-label'>Sinonim/parafrasa yang dipakai sistem</div>"
             f"<div class='alias-row'>{alias_html}</div>"
+            f"<button class='keyword-delete-btn' type='button' onclick=\"window.rabDeleteKeyword && window.rabDeleteKeyword('{keyword_id}')\">Hapus keyword</button>"
             "</div>"
         )
 
@@ -1241,6 +1302,14 @@ def render_keyword_cards(query=""):
 
     return (
         "<div class='keyword-workspace'>"
+        "<script>"
+        "window.rabDeleteKeyword=function(id){"
+        "const wrap=document.querySelector('#delete-kw-id');"
+        "const input=wrap&&wrap.querySelector('textarea,input');"
+        "const btn=document.querySelector('#delete-kw-trigger button');"
+        "if(input&&btn){input.value=id;input.dispatchEvent(new Event('input',{bubbles:true}));btn.click();}"
+        "};"
+        "</script>"
         "<div class='keyword-search-panel'>"
         "<div class='keyword-search-head'>"
         f"<div class='keyword-search-title'>{html.escape(query or 'Keyword NAC')}</div>"
@@ -1525,10 +1594,8 @@ def app():
                     import_btn = gr.Button("Import Keyword dari Excel")
                     export_kw_btn = gr.Button("Export Database Keyword")
                     export_kw_file = gr.File(label="Download Keyword DB")
-                with gr.Accordion("Hapus keyword NAC", open=False):
-                    delete_kw_choice = gr.Dropdown(choices=keyword_delete_choices(), label="Keyword NAC yang akan dihapus")
-                    delete_kw_btn = gr.Button("Hapus Keyword NAC", variant="stop")
-                    gr.Markdown("Keyword dibuat inactive, bukan dihapus permanen, agar riwayat audit tetap aman.")
+                delete_kw_id = gr.Textbox(elem_id="delete-kw-id", elem_classes=["hidden-delete-control"], label="delete_keyword_id")
+                delete_kw_btn = gr.Button("Hapus Keyword NAC", elem_id="delete-kw-trigger", elem_classes=["hidden-delete-control"])
                 kw_msg = gr.Markdown()
                 keyword_search = gr.Textbox(label="Cari keyword NAC", placeholder="Contoh: konsumsi, honorarium, transport, hadiah")
                 keyword_cards = gr.HTML(value=render_keyword_cards(""))
@@ -1593,9 +1660,9 @@ def app():
         redaction_text.submit(analyze_redaction_ui, redaction_text, redaction_result)
         redaction_text.change(analyze_redaction_ui, redaction_text, redaction_result)
         keyword_search.change(render_keyword_cards, keyword_search, keyword_cards)
-        simple_add_btn.click(add_keyword_simple_ui, simple_kw, [kw_msg, keyword_cards, delete_kw_choice])
-        import_btn.click(import_keywords_simple_ui, import_file, [kw_msg, keyword_cards, delete_kw_choice])
-        delete_kw_btn.click(delete_keyword_simple_ui, delete_kw_choice, [kw_msg, keyword_cards, delete_kw_choice])
+        simple_add_btn.click(add_keyword_simple_ui, simple_kw, [kw_msg, keyword_cards, delete_kw_id])
+        import_btn.click(import_keywords_simple_ui, import_file, [kw_msg, keyword_cards, delete_kw_id])
+        delete_kw_btn.click(delete_keyword_by_id_ui, delete_kw_id, [kw_msg, keyword_cards])
         export_kw_btn.click(export_keywords_ui, outputs=export_kw_file)
         learn_btn.click(learning_ui, outputs=learning_html)
         backup_btn.click(backup_ui, outputs=backup_file)

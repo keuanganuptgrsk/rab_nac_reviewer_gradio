@@ -22,7 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.6.6 - Cleaner Upload and Keyword Delete`.
+- Versi saat ini: `v0.6.7 - Doodle UI and Card Delete`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.
@@ -138,6 +138,8 @@ pip install easyocr
 pip install paddleocr paddlepaddle
 pip install pytesseract
 ```
+
+Jika PaddleOCR tersedia, aplikasi akan mencobanya lebih dulu untuk PDF scan/gambar dalam mode OCR `auto`, lalu fallback ke EasyOCR dan Tesseract bila gagal.
 
 Untuk Tesseract, binary Tesseract OCR juga harus tersedia di sistem.
 
