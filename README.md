@@ -22,13 +22,13 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.7.3 - Minimal Header and Soft Keyword Cards`.
+- Versi saat ini: `v0.7.4 - Contrast and Cleanup Pass`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.
 - PDF scan/image OCR bersifat optional best-effort.
 - Deteksi hybrid: exact keyword, sinonim, fuzzy matching, semantic similarity opsional, allowable competitor, exception, dan feedback.
-- SQLite lokal untuk database keyword, exception, settings, feedback, dan backup.
+- SQLite lokal untuk database keyword, exception, settings, dan feedback.
 - Export Excel multi-sheet untuk audit/review.
 
 ## Versioning
@@ -59,7 +59,7 @@ Recommended Hugging Face Space setting:
 - SDK: Gradio
 - Hardware: CPU Basic
 - Python app file: `app.py`
-- Persistent data: gunakan Export/Import Backup secara rutin
+- Persistent data: simpan/export hasil review dan database keyword sesuai kebutuhan internal
 - Best input format: Excel/CSV RAB
 - OCR: optional best-effort, tergantung dependency yang tersedia
 
@@ -145,16 +145,14 @@ Untuk Tesseract, binary Tesseract OCR juga harus tersedia di sistem.
 
 Jika OCR gagal, aplikasi tetap berjalan untuk Excel/CSV dan PDF berbasis teks.
 
-## Export dan Backup
+## Export
 
-Tab **Export Excel** menyediakan:
+Fitur export menyediakan:
 
 - Export hasil review Excel dengan sheet Summary, Findings, Suggestions, Feedback Log, Keyword Matches, dan NAC Keyword Database Snapshot.
 - Export feedback logs.
-- Export SQLite database backup.
-- Import SQLite database backup.
 
-Pada hosting gratis, filesystem tidak selalu ideal untuk catatan bisnis permanen. Export backup secara rutin.
+Pada hosting gratis, filesystem tidak selalu ideal untuk catatan bisnis permanen. Simpan hasil review dan database keyword secara teratur sesuai kebutuhan internal.
 
 ## Workflow Rekomendasi
 

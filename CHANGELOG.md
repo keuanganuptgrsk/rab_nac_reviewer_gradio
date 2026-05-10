@@ -2,6 +2,15 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.4 - Contrast and Cleanup Pass - 2026-05-10
+
+- Memberi ruang aman pada header dan versioning agar teks tidak terpotong di sisi kiri/atas/bawah.
+- Menghapus subtitle hero `Internal review workspace...` dari tampilan awal.
+- Memperbaiki kontras teks pada tombol/dropdown gelap agar tetap terbaca.
+- Membuat upload Excel keyword NAC cukup outline tanpa background gelap dan tinggi lebih proporsional.
+- Memindahkan tombol hapus keyword ke pojok kanan bawah card dengan ukuran lebih kecil.
+- Menghapus fitur backup data dari tab Settings.
+
 ## v0.7.3 - Minimal Header and Soft Keyword Cards - 2026-05-10
 
 - Menghapus card/gradient pada header dan menyembunyikan subtitle hero agar judul tidak terpotong.

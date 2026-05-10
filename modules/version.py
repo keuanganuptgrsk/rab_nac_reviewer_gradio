@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.3"
-APP_RELEASE_TITLE = "Minimal Header and Soft Keyword Cards"
+APP_VERSION = "0.7.4"
+APP_RELEASE_TITLE = "Contrast and Cleanup Pass"
 APP_RELEASE_NOTES = (
-    "Header dibuat plain tanpa card/subtitle, upload bar coklat dihilangkan, analisa redaksi disederhanakan satu border, dan keyword cards memakai soft palette."
+    "Header diberi ruang aman, subtitle dihapus, kontras tombol diperbaiki, upload keyword dibuat outline, backup data disembunyikan, dan tombol hapus keyword dipadatkan."
 )
 
 

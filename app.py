@@ -780,6 +780,73 @@ input, textarea, select {
     background: #ffffff !important;
 }
 
+#keyword-upload-file,
+#keyword-upload-file > div,
+#keyword-upload-file .wrap,
+#keyword-upload-file .upload-container,
+#keyword-upload-file [data-testid="file"] {
+    min-height: 96px !important;
+    height: 96px !important;
+    background: #ffffff !important;
+    border: 1px solid var(--rab-border) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+}
+
+#keyword-upload-file button,
+#keyword-upload-file [data-testid="button"],
+#keyword-upload-file label {
+    background: transparent !important;
+    color: #2C3947 !important;
+    border: 1px solid var(--rab-border) !important;
+    box-shadow: none !important;
+}
+
+#keyword-upload-file svg,
+#keyword-upload-file [data-testid="upload-icon"],
+#keyword-upload-file .upload-icon,
+#keyword-upload-file p,
+#keyword-upload-file span:not(.file-name) {
+    display: none !important;
+}
+
+#keyword-upload-file {
+    position: relative;
+    font-size: 0 !important;
+    color: transparent !important;
+}
+
+#keyword-upload-file * {
+    font-size: 0 !important;
+    color: transparent !important;
+}
+
+#keyword-upload-file::after {
+    content: "Click to Upload";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #547A95;
+    font-size: 16px;
+    font-weight: 800;
+    pointer-events: none;
+}
+
+.gradio-container button[aria-expanded]:focus,
+.gradio-container button[aria-expanded]:focus-visible {
+    outline: 2px solid rgba(84, 122, 149, 0.24) !important;
+    outline-offset: 2px !important;
+}
+
+.gradio-container label:has(input[type="radio"]:checked),
+.gradio-container label:has(input[type="checkbox"]:checked),
+.gradio-container label:has(input[type="radio"]:checked) *,
+.gradio-container label:has(input[type="checkbox"]:checked) * {
+    color: #ffffff !important;
+}
+
 #rab-upload-file button,
 #rab-upload-file [data-testid="button"],
 #rab-upload-file label {
@@ -881,7 +948,7 @@ body,
     width: min(calc(100vw - 48px), 1320px) !important;
     max-width: 1320px !important;
     margin: 0 auto !important;
-    padding: 32px 24px 56px !important;
+    padding: 42px 32px 64px !important;
 }
 
 .gradio-container > *,
@@ -909,14 +976,15 @@ h1, h2, h3,
 
 #app-hero {
     position: relative;
-    overflow: hidden;
+    overflow: visible !important;
     display: grid;
-    gap: 12px;
+    gap: 14px;
     background: transparent !important;
     border-radius: 0 !important;
     border: 0 !important;
     box-shadow: none !important;
-    padding: 0 0 18px !important;
+    padding: 12px 0 24px !important;
+    margin: 0 !important;
 }
 
 #app-hero::after {
@@ -926,9 +994,10 @@ h1, h2, h3,
 #app-hero h1 {
     color: #2C3947 !important;
     font-size: clamp(34px, 4vw, 56px) !important;
-    line-height: 1.05 !important;
+    line-height: 1.18 !important;
     max-width: 920px;
     margin: 0 !important;
+    overflow: visible !important;
 }
 
 #app-hero p,
@@ -950,6 +1019,7 @@ h1, h2, h3,
     font-family: "Fira Sans", Inter, sans-serif !important;
     font-size: 13px !important;
     font-weight: 700 !important;
+    line-height: 1.5 !important;
 }
 
 .tabs {
@@ -1045,6 +1115,22 @@ button[variant="primary"] {
     transform: none !important;
 }
 
+.gradio-container button:not([role="tab"]) *,
+button.primary *,
+.primary > button *,
+button[variant="primary"] * {
+    color: inherit !important;
+}
+
+.gradio-container button[aria-expanded],
+.gradio-container button[aria-expanded]:hover {
+    min-height: 50px !important;
+    background: transparent !important;
+    color: #2C3947 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
 footer,
 .footer,
 #footer,
@@ -1091,6 +1177,11 @@ label,
     background: #ffffff !important;
     box-shadow: none !important;
     transform: none !important;
+}
+
+.keyword-card {
+    position: relative !important;
+    padding-bottom: 62px !important;
 }
 
 .redaction-search,
@@ -1140,20 +1231,40 @@ label,
 }
 
 .keyword-delete-btn {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
     width: auto;
-    margin-top: 14px;
-    padding: 8px 12px;
+    min-height: 34px !important;
+    margin: 0;
+    padding: 7px 10px !important;
     background: transparent !important;
     color: #991b1b !important;
     box-shadow: none !important;
     border: 1px solid #fecaca !important;
     border-radius: 999px !important;
-    font-size: 13px;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
 }
 
 .keyword-delete-btn:hover {
     background: #ef4444 !important;
     color: #ffffff !important;
+}
+
+.versioning-panel {
+    padding: 16px 18px 18px !important;
+    border: 1px solid var(--rab-border);
+    border-radius: 12px;
+    background: #ffffff;
+    line-height: 1.65;
+    overflow: visible;
+}
+
+.versioning-panel h3,
+.versioning-panel p {
+    margin: 0 0 10px !important;
+    line-height: 1.65 !important;
 }
 
 .redaction-score,
@@ -2180,7 +2291,6 @@ def app():
 <section id="app-hero">
   <div class="version-pill">Versi {APP_VERSION}</div>
   <h1>RAB NAC Reviewer Copilot</h1>
-  <p class="hero-copy">Internal review workspace untuk mendeteksi potensi NAC, mengecek redaksi, dan menjaga audit trail keyword secara sederhana.</p>
 </section>
 """
         )
@@ -2244,7 +2354,7 @@ def app():
                     gr.Markdown("Kategori, confidence dasar, catatan, dan kandidat sinonim/parafrasa akan dipilih otomatis oleh sistem.")
                 with gr.Accordion("Upload Excel keyword NAC", open=False):
                     gr.Markdown("Kolom minimal: `category` dan `keyword`. Jika hanya punya daftar keyword, buat satu kolom bernama `keyword`.")
-                    import_file = gr.File(label="Upload Excel Keyword NAC", file_types=[".xlsx"])
+                    import_file = gr.File(label="Upload Excel Keyword NAC", file_types=[".xlsx"], elem_id="keyword-upload-file", height=96)
                     import_btn = gr.Button("Import Keyword dari Excel")
                     export_kw_btn = gr.Button("Export Database Keyword")
                     export_kw_file = gr.File(label="Download Keyword DB")
@@ -2262,19 +2372,14 @@ def app():
                 semantic_mode = gr.Radio(["Nonaktif", "Aktif"], value="Aktif" if settings.get("enable_semantic", "false") == "true" else "Nonaktif", label="Deteksi Sinonim/Parafrasa Otomatis")
                 ocr_mode = gr.Radio(["auto", "disabled"], value="auto" if settings.get("ocr_mode", "auto") != "disabled" else "disabled", label="OCR PDF Scan/Gambar")
                 save_set = gr.Button("Simpan Settings", variant="primary")
-                with gr.Accordion("Backup data", open=False):
-                    backup_btn = gr.Button("Export SQLite database backup")
-                    backup_file = gr.File(label="SQLite Backup")
-                    restore_file = gr.File(label="Import SQLite database backup", file_types=[".db"])
-                    restore_btn = gr.Button("Restore Backup")
-                    restore_msg = gr.Markdown()
                 reset_db = gr.Button("Reset demo database")
                 settings_msg = gr.Markdown()
-                gr.Markdown(
-                    "### Versioning\n"
-                    f"{version_banner()}\n\n"
-                    "Setiap penambahan fitur wajib memperbarui `modules/version.py` dan `CHANGELOG.md` "
-                    "dengan versi, judul, tanggal, dan keterangan."
+                gr.HTML(
+                    "<section class='versioning-panel'>"
+                    "<h3>Versioning</h3>"
+                    f"<p>{version_banner()}</p>"
+                    "<p>Setiap penambahan fitur wajib memperbarui <code>modules/version.py</code> dan <code>CHANGELOG.md</code> dengan versi, judul, tanggal, dan keterangan.</p>"
+                    "</section>"
                 )
 
         file_in.change(
@@ -2319,8 +2424,6 @@ def app():
         delete_kw_btn.click(delete_keyword_by_id_ui, delete_kw_id, [kw_msg, keyword_cards])
         export_kw_btn.click(export_keywords_ui, outputs=export_kw_file)
         learn_btn.click(learning_ui, outputs=learning_html)
-        backup_btn.click(backup_ui, outputs=backup_file)
-        restore_btn.click(restore_ui, restore_file, restore_msg)
         save_set.click(save_simple_settings_ui, [review_mode, semantic_mode, ocr_mode], settings_msg)
         reset_db.click(reset_db_ui, outputs=settings_msg)
         demo.load(None, None, None, js=DELETE_KEYWORD_JS)
