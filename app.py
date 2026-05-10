@@ -1281,6 +1281,122 @@ table {
     border-color: var(--rab-border) !important;
 }
 
+#app-hero {
+    padding-left: 14px !important;
+}
+
+#app-hero .version-pill {
+    padding-left: 6px !important;
+}
+
+#rab-upload-file {
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+#rab-upload-file button,
+#rab-upload-file [data-testid="button"],
+#rab-upload-file label {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 160px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+}
+
+#rab-upload-file::after {
+    z-index: 3 !important;
+}
+
+#keyword-upload-accordion,
+#keyword-upload-accordion > div,
+#keyword-upload-accordion .block,
+#keyword-upload-accordion .wrap,
+#keyword-upload-accordion .form {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+#keyword-upload-accordion button,
+#keyword-upload-accordion button:hover,
+#keyword-upload-accordion button:focus,
+#keyword-upload-accordion button:focus-visible,
+#keyword-upload-accordion *:focus,
+#keyword-upload-accordion *:focus-visible {
+    min-height: 48px !important;
+    background: transparent !important;
+    color: #2C3947 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+#keyword-upload-file {
+    position: relative !important;
+    min-height: 86px !important;
+    height: 86px !important;
+    border: 1px solid var(--rab-border) !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+}
+
+#keyword-upload-file > div,
+#keyword-upload-file .wrap,
+#keyword-upload-file .upload-container,
+#keyword-upload-file [data-testid="file"] {
+    min-height: 84px !important;
+    height: 84px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+#keyword-upload-file button,
+#keyword-upload-file [data-testid="button"],
+#keyword-upload-file label {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 84px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+}
+
+#keyword-upload-file::after {
+    z-index: 3 !important;
+}
+
+#keyword-upload-file::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--rab-border);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 1;
+}
+
 th {
     background: #f8fafc !important;
     color: #0f172a !important;
@@ -2352,7 +2468,7 @@ def app():
                     simple_kw = gr.Textbox(label="Keyword NAC", placeholder="Contoh: uang saku, honorarium, biaya representasi")
                     simple_add_btn = gr.Button("Tambah Keyword NAC", variant="primary")
                     gr.Markdown("Kategori, confidence dasar, catatan, dan kandidat sinonim/parafrasa akan dipilih otomatis oleh sistem.")
-                with gr.Accordion("Upload Excel keyword NAC", open=False):
+                with gr.Accordion("Upload Excel keyword NAC", open=False, elem_id="keyword-upload-accordion"):
                     gr.Markdown("Kolom minimal: `category` dan `keyword`. Jika hanya punya daftar keyword, buat satu kolom bernama `keyword`.")
                     import_file = gr.File(label="Upload Excel Keyword NAC", file_types=[".xlsx"], elem_id="keyword-upload-file", height=96)
                     import_btn = gr.Button("Import Keyword dari Excel")

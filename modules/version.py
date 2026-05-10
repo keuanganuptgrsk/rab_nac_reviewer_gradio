@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.4"
-APP_RELEASE_TITLE = "Contrast and Cleanup Pass"
+APP_VERSION = "0.7.5"
+APP_RELEASE_TITLE = "Upload Interaction Cleanup"
 APP_RELEASE_NOTES = (
-    "Header diberi ruang aman, subtitle dihapus, kontras tombol diperbaiki, upload keyword dibuat outline, backup data disembunyikan, dan tombol hapus keyword dipadatkan."
+    "Area versi diberi padding ekstra, upload RAB dibuat bisa diklik kembali, dan upload Excel keyword disederhanakan menjadi satu border."
 )
 
 

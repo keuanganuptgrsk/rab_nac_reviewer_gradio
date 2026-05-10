@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.5 - Upload Interaction Cleanup - 2026-05-10
+
+- Menambah safe padding pada area versi agar huruf awal tidak terpotong.
+- Mengaktifkan kembali klik pada area upload RAB tanpa menampilkan elemen upload bawaan yang berisik.
+- Menyederhanakan upload Excel keyword NAC menjadi satu border bersih tanpa layer/border bertumpuk.
+
 ## v0.7.4 - Contrast and Cleanup Pass - 2026-05-10
 
 - Memberi ruang aman pada header dan versioning agar teks tidak terpotong di sisi kiri/atas/bawah.
