@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.2"
-APP_RELEASE_TITLE = "Clean Tabs and Surfaces"
+APP_VERSION = "0.7.3"
+APP_RELEASE_TITLE = "Minimal Header and Soft Keyword Cards"
 APP_RELEASE_NOTES = (
-    "Tab dibuat rata tanpa overlay, card/shadow dikurangi agar tulisan tidak terhalang, upload area dipadatkan, dan footer Gradio disembunyikan."
+    "Header dibuat plain tanpa card/subtitle, upload bar coklat dihilangkan, analisa redaksi disederhanakan satu border, dan keyword cards memakai soft palette."
 )
 
 

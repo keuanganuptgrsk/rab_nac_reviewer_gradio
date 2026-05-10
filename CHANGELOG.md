@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.3 - Minimal Header and Soft Keyword Cards - 2026-05-10
+
+- Menghapus card/gradient pada header dan menyembunyikan subtitle hero agar judul tidak terpotong.
+- Menghilangkan bar coklat pada area upload dengan menyembunyikan label/button internal file upload.
+- Menyederhanakan tab `Analisa Redaksi NAC` agar hanya memakai satu border input tanpa lapisan abu-abu.
+- Mengubah keyword cards menjadi soft colorful palette dan mengecilkan tombol hapus agar tidak mendominasi konten.
+
 ## v0.7.2 - Clean Tabs and Surfaces - 2026-05-10
 
 - Membuat tab rata dalam bar tanpa pill yang menjorok sehingga tidak ada elemen yang menghalangi tab/konten.
