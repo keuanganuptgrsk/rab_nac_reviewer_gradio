@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.5"
-APP_RELEASE_TITLE = "Upload Interaction Cleanup"
+APP_VERSION = "0.7.6"
+APP_RELEASE_TITLE = "Compact Keyword Delete"
 APP_RELEASE_NOTES = (
-    "Area versi diberi padding ekstra, upload RAB dibuat bisa diklik kembali, dan upload Excel keyword disederhanakan menjadi satu border."
+    "Tombol hapus keyword dibuat kecil dan masuk flow card agar tidak menutupi sinonim/parafrasa."
 )
 
 

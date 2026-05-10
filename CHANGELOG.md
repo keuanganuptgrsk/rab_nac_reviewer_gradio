@@ -2,6 +2,11 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.6 - Compact Keyword Delete - 2026-05-10
+
+- Mengecilkan tombol hapus keyword menjadi chip kecil.
+- Mengubah posisi tombol hapus keyword agar masuk flow card dan rata kanan bawah, sehingga tidak menutupi sinonim/parafrasa.
+
 ## v0.7.5 - Upload Interaction Cleanup - 2026-05-10
 
 - Menambah safe padding pada area versi agar huruf awal tidak terpotong.

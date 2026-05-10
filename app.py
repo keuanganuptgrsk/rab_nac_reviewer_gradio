@@ -1181,7 +1181,7 @@ label,
 
 .keyword-card {
     position: relative !important;
-    padding-bottom: 62px !important;
+    padding-bottom: 16px !important;
 }
 
 .redaction-search,
@@ -1231,19 +1231,21 @@ label,
 }
 
 .keyword-delete-btn {
-    position: absolute;
-    right: 18px;
-    bottom: 18px;
-    width: auto;
-    min-height: 34px !important;
-    margin: 0;
-    padding: 7px 10px !important;
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 28px !important;
+    margin: 10px 0 0 auto !important;
+    padding: 5px 9px !important;
     background: transparent !important;
     color: #991b1b !important;
     box-shadow: none !important;
     border: 1px solid #fecaca !important;
     border-radius: 999px !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
     line-height: 1.2 !important;
 }
 
@@ -2155,7 +2157,7 @@ def render_keyword_cards(query=""):
             f"<div class='keyword-desc'>{desc}</div>"
             "<div class='alias-label'>Sinonim/parafrasa yang dipakai sistem</div>"
             f"<div class='alias-row'>{alias_html}</div>"
-            f"<button class='keyword-delete-btn' type='button' data-delete-keyword-id='{keyword_id}'>Hapus keyword</button>"
+            f"<button class='keyword-delete-btn' type='button' data-delete-keyword-id='{keyword_id}'>Hapus</button>"
             "</div>"
         )
 
