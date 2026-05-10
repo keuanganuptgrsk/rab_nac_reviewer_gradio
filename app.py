@@ -561,21 +561,22 @@ a {
     pointer-events: none !important;
 }
 
-/* Gradient design skill override: purple-to-pink axis, modern geometry, stable app shell */
+/* Perspective-inspired UI override: bright SaaS funnel style with stable full-width panels */
 body,
 .gradio-container {
     background:
-        radial-gradient(circle at 12% 8%, rgba(153, 15, 250, 0.18), transparent 32%),
-        radial-gradient(circle at 90% 4%, rgba(230, 0, 118, 0.16), transparent 30%),
-        linear-gradient(135deg, #ffffff 0%, #fbf7ff 42%, #fff5fa 100%) !important;
+        radial-gradient(circle at 14% 18%, rgba(18, 184, 134, 0.18), transparent 30%),
+        radial-gradient(circle at 86% 8%, rgba(184, 255, 67, 0.22), transparent 28%),
+        linear-gradient(180deg, #f7fff8 0%, #ffffff 48%, #f8fafc 100%) !important;
     font-family: "Montserrat", Inter, ui-sans-serif, system-ui, sans-serif !important;
 }
 
 .gradio-container {
-    width: min(100%, 1440px) !important;
-    max-width: 1440px !important;
+    width: min(100%, 1280px) !important;
+    max-width: 1280px !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
+    padding: 34px 28px 56px !important;
 }
 
 .gradio-container > *,
@@ -605,11 +606,13 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3,
 
 #app-hero {
     background:
-        linear-gradient(135deg, rgba(153, 15, 250, 0.95) 0%, rgba(208, 0, 185, 0.92) 46%, rgba(230, 0, 118, 0.92) 100%) !important;
+        radial-gradient(circle at 74% 18%, rgba(184, 255, 67, 0.28), transparent 34%),
+        linear-gradient(135deg, #092013 0%, #0a3b24 48%, #10b981 100%) !important;
     border: 0 !important;
-    border-radius: 28px !important;
-    box-shadow: 0 28px 70px rgba(153, 15, 250, 0.28) !important;
+    border-radius: 32px !important;
+    box-shadow: 0 30px 80px rgba(15, 118, 82, 0.24) !important;
     transform: none !important;
+    padding: 42px 44px !important;
 }
 
 #app-hero h1,
@@ -618,22 +621,24 @@ h1, h2, h3, .prose h1, .prose h2, .prose h3,
 }
 
 #app-hero .version-pill {
-    background: rgba(255, 255, 255, 0.16) !important;
-    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    background: rgba(184, 255, 67, 0.18) !important;
+    border: 1px solid rgba(184, 255, 67, 0.38) !important;
     border-radius: 999px !important;
 }
 
 .tabs {
-    border: 1px solid rgba(153, 15, 250, 0.14) !important;
-    border-radius: 22px !important;
-    background: rgba(255, 255, 255, 0.86) !important;
-    box-shadow: 0 18px 44px rgba(17, 24, 39, 0.08) !important;
+    border: 1px solid rgba(15, 118, 82, 0.12) !important;
+    border-radius: 28px !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.08) !important;
     overflow: hidden !important;
+    margin: 0 auto !important;
 }
 
 div[role="tabpanel"] {
     min-height: 780px !important;
-    padding: 24px !important;
+    padding: 32px !important;
+    background: #ffffff !important;
 }
 
 .tab-nav button,
@@ -641,13 +646,15 @@ div[role="tabpanel"] {
 button[role="tab"] {
     font-family: "Montserrat", Inter, sans-serif !important;
     border-radius: 999px !important;
+    color: #64748b !important;
+    font-weight: 800 !important;
 }
 
 .tab-nav button.selected,
 .tabs button.selected,
 button[role="tab"][aria-selected="true"] {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #990FFA 0%, #E60076 100%) !important;
+    color: #062414 !important;
+    background: linear-gradient(135deg, #b8ff43 0%, #36e181 100%) !important;
 }
 
 button.primary,
@@ -655,18 +662,18 @@ button.primary,
 button[variant="primary"],
 .gradio-container button:not([role="tab"]) {
     border: 0 !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, #990FFA 0%, #E60076 100%) !important;
-    color: #ffffff !important;
-    box-shadow: 0 16px 32px rgba(153, 15, 250, 0.24) !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #b8ff43 0%, #22c55e 100%) !important;
+    color: #062414 !important;
+    box-shadow: 0 18px 34px rgba(34, 197, 94, 0.24) !important;
     transform: none !important;
     font-family: "Montserrat", Inter, sans-serif !important;
 }
 
 input, textarea, select {
-    border: 1px solid rgba(153, 15, 250, 0.26) !important;
-    border-radius: 16px !important;
-    background: #ffffff !important;
+    border: 1px solid rgba(15, 118, 82, 0.18) !important;
+    border-radius: 18px !important;
+    background: #f8fffb !important;
     font-family: "Montserrat", Inter, sans-serif !important;
 }
 
@@ -677,18 +684,16 @@ input, textarea, select {
 .simple-note,
 .keyword-search-panel,
 .redaction-search {
-    border: 1px solid rgba(153, 15, 250, 0.16) !important;
-    border-radius: 24px !important;
-    background:
-        linear-gradient(#ffffff, #ffffff) padding-box,
-        linear-gradient(135deg, rgba(153, 15, 250, 0.70), rgba(230, 0, 118, 0.62)) border-box !important;
-    box-shadow: 0 20px 48px rgba(17, 24, 39, 0.08) !important;
+    border: 1px solid rgba(15, 118, 82, 0.12) !important;
+    border-radius: 28px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 22px 56px rgba(15, 23, 42, 0.08) !important;
     transform: none !important;
 }
 
 .keyword-card:hover,
 .finding-card:hover {
-    box-shadow: 0 28px 64px rgba(153, 15, 250, 0.18) !important;
+    box-shadow: 0 26px 64px rgba(15, 118, 82, 0.16) !important;
     transform: translateY(-2px) !important;
 }
 
@@ -699,17 +704,57 @@ input, textarea, select {
 .learning-count {
     border: 0 !important;
     border-radius: 999px !important;
-    background: linear-gradient(135deg, rgba(153, 15, 250, 0.12), rgba(230, 0, 118, 0.12)) !important;
-    color: #6d0bb8 !important;
+    background: linear-gradient(135deg, rgba(184, 255, 67, 0.40), rgba(34, 197, 94, 0.18)) !important;
+    color: #064e3b !important;
 }
 
 .keyword-delete-btn {
     border: 0 !important;
     border-radius: 14px !important;
-    background: linear-gradient(135deg, #DC2626 0%, #E60076 100%) !important;
+    background: linear-gradient(135deg, #ef4444 0%, #f97316 100%) !important;
     color: #ffffff !important;
     box-shadow: 0 14px 28px rgba(220, 38, 38, 0.20) !important;
     font-family: "Montserrat", Inter, sans-serif !important;
+}
+
+.gradio-container .gap,
+.gradio-container .row,
+.gradio-container .column,
+.gradio-container .form,
+.gradio-container .block,
+.gradio-container .block > div,
+.gradio-container .wrap,
+.gradio-container .contain,
+.gradio-container .file-preview,
+.gradio-container label,
+.gradio-container .upload-container,
+.gradio-container [data-testid="block-info"],
+.gradio-container [data-testid="file"],
+.gradio-container [data-testid="textbox"],
+.gradio-container [data-testid="button"],
+.gradio-container [data-testid="radio"],
+.gradio-container [data-testid="checkbox"],
+.gradio-container [data-testid="dropdown"],
+.gradio-container [data-testid="dataframe"],
+.gradio-container [data-testid="html"] {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.gradio-container [role="tabpanel"] > div,
+.gradio-container [role="tabpanel"] > div > div {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.gradio-container .tabs > div {
+    width: 100% !important;
+}
+
+.gradio-container button,
+.gradio-container textarea,
+.gradio-container input {
+    max-width: 100% !important;
 }
 
 .simple-note {

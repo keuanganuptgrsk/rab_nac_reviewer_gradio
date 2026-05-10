@@ -2,6 +2,12 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.9 - Perspective Gradient UI - 2026-05-10
+
+- Mengubah UI mengikuti referensi Gradient Pro/Perspective: hero hijau gelap, aksen neon green, pill navigation, dan glass cards.
+- Memperkuat aturan width untuk tab panel, row, column, group, dan komponen Gradio agar tidak mengecil saat berpindah tab.
+- Menjaga card keyword dan hasil review tetap full-width di dalam shell aplikasi.
+
 ## v0.6.8 - Gradient UI and Stable Width - 2026-05-10
 
 - Mengubah UI dari doodle ke TypeUI Gradient-inspired style: purple-to-pink gradients, Montserrat, Space Grotesk, glass cards, dan gradient actions.
