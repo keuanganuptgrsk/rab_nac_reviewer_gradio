@@ -1284,11 +1284,20 @@ table {
 }
 
 #app-hero {
-    padding-left: 14px !important;
+    padding-left: 24px !important;
 }
 
 #app-hero .version-pill {
-    padding-left: 6px !important;
+    margin-left: 0 !important;
+    padding-left: 12px !important;
+}
+
+#app-hero .version-pill::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 1px;
+    flex: 0 0 8px;
 }
 
 #rab-upload-file {
@@ -2407,7 +2416,7 @@ def app():
         gr.Markdown(
             f"""
 <section id="app-hero">
-  <div class="version-pill">Versi {APP_VERSION}</div>
+  <div class="version-pill"><span>Versi {APP_VERSION}</span></div>
   <h1>RAB NAC Reviewer Copilot</h1>
 </section>
 """

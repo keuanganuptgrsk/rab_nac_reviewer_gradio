@@ -2,6 +2,10 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.7 - Version Safe Padding - 2026-05-10
+
+- Menambahkan spacer dan padding ekstra pada label versi agar huruf awal `V` tidak terpotong di pojok kiri atas.
+
 ## v0.7.6 - Compact Keyword Delete - 2026-05-10
 
 - Mengecilkan tombol hapus keyword menjadi chip kecil.

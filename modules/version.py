@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.6"
-APP_RELEASE_TITLE = "Compact Keyword Delete"
+APP_VERSION = "0.7.7"
+APP_RELEASE_TITLE = "Version Safe Padding"
 APP_RELEASE_NOTES = (
-    "Tombol hapus keyword dibuat kecil dan masuk flow card agar tidak menutupi sinonim/parafrasa."
+    "Label versi diberi spacer dan padding ekstra agar huruf awal tidak terpotong di pojok kiri atas."
 )
 
 
