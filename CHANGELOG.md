@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.2 - Clean Tabs and Surfaces - 2026-05-10
+
+- Membuat tab rata dalam bar tanpa pill yang menjorok sehingga tidak ada elemen yang menghalangi tab/konten.
+- Mengurangi card shadow, radius, dan hover transform agar tidak menghalangi tulisan.
+- Memadatkan upload area menjadi 160px dan menyederhanakan surface-nya.
+- Menyembunyikan footer Gradio agar tidak mengganggu tampilan aplikasi.
+
 ## v0.7.1 - ColorHunt Palette and Tab Polish - 2026-05-10
 
 - Mengganti color palette ke ColorHunt: `#E8EDF2`, `#2C3947`, `#547A95`, `#C2A56D`.

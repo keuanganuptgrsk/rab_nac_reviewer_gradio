@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.1"
-APP_RELEASE_TITLE = "ColorHunt Palette and Tab Polish"
+APP_VERSION = "0.7.2"
+APP_RELEASE_TITLE = "Clean Tabs and Surfaces"
 APP_RELEASE_NOTES = (
-    "Palet diganti ke ColorHunt E8EDF2/2C3947/547A95/C2A56D, tab diperbaiki agar tidak terpotong, dan upload prompt disederhanakan ke Click to Upload."
+    "Tab dibuat rata tanpa overlay, card/shadow dikurangi agar tulisan tidak terhalang, upload area dipadatkan, dan footer Gradio disembunyikan."
 )
 
 

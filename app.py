@@ -745,25 +745,25 @@ input, textarea, select {
 }
 
 .gradio-container [data-testid="file"] {
-    min-height: 220px !important;
-    overflow: visible !important;
+    min-height: 160px !important;
+    overflow: hidden !important;
 }
 
 .gradio-container [data-testid="file"] .upload-container {
-    min-height: 180px !important;
+    min-height: 140px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    overflow: visible !important;
+    overflow: hidden !important;
 }
 
 #rab-upload-file,
 #rab-upload-file > div,
 #rab-upload-file .wrap,
 #rab-upload-file .upload-container {
-    min-height: 240px !important;
-    height: 240px !important;
-    overflow: visible !important;
+    min-height: 160px !important;
+    height: 160px !important;
+    overflow: hidden !important;
 }
 
 #rab-upload-file [data-testid="file"],
@@ -800,7 +800,7 @@ input, textarea, select {
     top: 48%;
     transform: translate(-50%, -50%);
     color: #547A95;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     pointer-events: none;
 }
@@ -951,25 +951,26 @@ h1, h2, h3,
 }
 
 .tabs {
-    overflow: hidden !important;
+    overflow: visible !important;
     background: rgba(255, 255, 255, 0.92) !important;
     border: 1px solid var(--rab-border) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 22px 54px rgba(15, 23, 42, 0.08) !important;
-    backdrop-filter: blur(12px);
+    border-radius: 16px !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05) !important;
+    backdrop-filter: none;
 }
 
 div[role="tablist"] {
     display: grid !important;
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     align-items: center !important;
-    gap: 10px !important;
-    min-height: 82px !important;
-    height: 82px !important;
-    padding: 10px 12px !important;
-    overflow: visible !important;
-    background: #f8fafc !important;
+    gap: 0 !important;
+    min-height: 58px !important;
+    height: 58px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #E8EDF2 !important;
     border-bottom: 1px solid var(--rab-border) !important;
+    border-radius: 16px 16px 0 0 !important;
 }
 
 button[role="tab"],
@@ -977,21 +978,23 @@ button[role="tab"],
 .tabs button {
     display: inline-flex !important;
     align-items: center !important;
-    min-height: 52px !important;
-    height: 52px !important;
-    padding: 0 18px !important;
+    min-height: 58px !important;
+    height: 58px !important;
+    padding: 0 12px !important;
     margin: 0 !important;
     line-height: 1 !important;
     justify-content: center !important;
     white-space: nowrap !important;
     border: 0 !important;
-    border-radius: 14px !important;
+    border-radius: 0 !important;
     background: transparent !important;
     color: #475569 !important;
     font-family: "Fira Sans", Inter, sans-serif !important;
     font-weight: 700 !important;
-    overflow: visible !important;
-    transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: background 160ms ease, color 160ms ease !important;
 }
 
 button[role="tab"]::before,
@@ -1010,7 +1013,7 @@ button[role="tab"][aria-selected="true"],
 .tabs button.selected {
     background: #2C3947 !important;
     color: #ffffff !important;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18) !important;
+    box-shadow: none !important;
 }
 
 div[role="tabpanel"] {
@@ -1025,10 +1028,10 @@ button.primary,
 button[variant="primary"] {
     min-height: 46px !important;
     border: 0 !important;
-    border-radius: 14px !important;
+    border-radius: 10px !important;
     background: #C2A56D !important;
     color: #2C3947 !important;
-    box-shadow: 0 12px 24px rgba(194, 165, 109, 0.24) !important;
+    box-shadow: none !important;
     font-family: "Fira Sans", Inter, sans-serif !important;
     font-weight: 800 !important;
     transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease !important;
@@ -1037,7 +1040,18 @@ button[variant="primary"] {
 .gradio-container button:not([role="tab"]):hover {
     background: #A9894E !important;
     color: #ffffff !important;
-    transform: translateY(-1px) !important;
+    transform: none !important;
+}
+
+footer,
+.footer,
+#footer,
+[data-testid="footer"],
+.built-with,
+.api-info,
+a[href*="gradio.app"],
+button[aria-label="Use via API"] {
+    display: none !important;
 }
 
 input, textarea, select,
@@ -1071,9 +1085,9 @@ label,
 .redaction-search,
 .findings-toolbar {
     border: 1px solid var(--rab-border) !important;
-    border-radius: 18px !important;
+    border-radius: 12px !important;
     background: #ffffff !important;
-    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.07) !important;
+    box-shadow: none !important;
     transform: none !important;
 }
 
@@ -1081,8 +1095,8 @@ label,
 .finding-card:hover,
 .learning-card:hover {
     border-color: rgba(194, 165, 109, 0.65) !important;
-    box-shadow: 0 22px 46px rgba(15, 23, 42, 0.10) !important;
-    transform: translateY(-2px) !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 .keyword-chip,
@@ -2143,7 +2157,7 @@ def app():
                 file_in = gr.File(
                     label="Upload RAB",
                     file_types=[".xlsx", ".xls", ".csv", ".pdf", ".png", ".jpg", ".jpeg"],
-                    height=240,
+                    height=160,
                     elem_id="rab-upload-file",
                 )
                 upload_msg = gr.Markdown()
