@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.9 - Tesseract OCR Enablement - 2026-05-10
+
+- Menambahkan `pytesseract` ke requirements dan `packages.txt` untuk memasang Tesseract OCR di Hugging Face Spaces.
+- Mengubah prioritas OCR otomatis menjadi Tesseract terlebih dahulu karena paling ringan untuk CPU Basic.
+- Menambahkan preprocessing gambar OCR dan menaikkan render PDF scan ke 220 DPI.
+- Memproses hingga 25 halaman scan dengan catatan bila PDF lebih panjang.
+
 ## v0.7.8 - Keyword Card Spacing - 2026-05-10
 
 - Menambahkan breathing room antara chip sinonim/parafrasa dan tombol `Hapus`.

@@ -22,7 +22,7 @@ Aplikasi ini membantu reviewer meningkatkan kejelasan, kepatuhan, auditability, 
 
 ## Kemampuan Utama
 
-- Versi saat ini: `v0.7.8 - Keyword Card Spacing`.
+- Versi saat ini: `v0.7.9 - Tesseract OCR Enablement`.
 - Upload RAB Excel, CSV, PDF, dan image.
 - Excel/CSV adalah alur paling andal.
 - PDF digital diekstrak dengan PyMuPDF.
@@ -129,19 +129,18 @@ Kandidat sinonim dari model tidak otomatis masuk database. Reviewer harus meneka
 
 ## OCR
 
-OCR tidak diwajibkan agar aplikasi tetap ringan di Hugging Face Spaces CPU Basic. Default requirements tidak memasang OCR berat.
+OCR scan PDF/gambar memakai Tesseract sebagai jalur default yang ringan untuk Hugging Face Spaces CPU Basic. File `packages.txt` memasang binary Tesseract dan bahasa Inggris/Indonesia saat Space dibuild.
 
 Opsional:
 
 ```bash
 pip install easyocr
 pip install paddleocr paddlepaddle
-pip install pytesseract
 ```
 
-Jika PaddleOCR tersedia, aplikasi akan mencobanya lebih dulu untuk PDF scan/gambar dalam mode OCR `auto`, lalu fallback ke EasyOCR dan Tesseract bila gagal.
+Dalam mode OCR `auto`, aplikasi mencoba Tesseract lebih dulu, lalu fallback ke PaddleOCR atau EasyOCR bila library tersebut dipasang manual.
 
-Untuk Tesseract, binary Tesseract OCR juga harus tersedia di sistem.
+Untuk menjalankan lokal dengan OCR, binary Tesseract harus tersedia di sistem. Di Windows, install Tesseract OCR lalu pastikan command `tesseract` tersedia di PATH.
 
 Jika OCR gagal, aplikasi tetap berjalan untuk Excel/CSV dan PDF berbasis teks.
 

@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 
 def _easyocr_text(image_path):
@@ -46,15 +47,22 @@ def _build_paddleocr():
 
 def _tesseract_text(image_path):
     import pytesseract
-    from PIL import Image
+    from PIL import Image, ImageOps
 
-    return pytesseract.image_to_string(Image.open(image_path), lang="ind+eng")
+    with Image.open(image_path) as image:
+        image = ImageOps.grayscale(image)
+        width, height = image.size
+        if width < 1800:
+            scale = 1800 / max(width, 1)
+            image = image.resize((int(width * scale), int(height * scale)))
+        image = ImageOps.autocontrast(image)
+        return pytesseract.image_to_string(image, lang="ind+eng", config="--psm 6")
 
 
 def extract_text_from_image(image_path, mode="auto"):
     path = Path(image_path)
     errors = []
-    engines = ["paddleocr", "easyocr", "tesseract"] if mode in ("auto", "", None) else [mode]
+    engines = ["tesseract", "paddleocr", "easyocr"] if mode in ("auto", "", None) else [mode]
     for engine in engines:
         if engine == "disabled":
             return "", "OCR dinonaktifkan."
@@ -71,10 +79,10 @@ def extract_text_from_image(image_path, mode="auto"):
                 return text, f"OCR berhasil menggunakan {engine}."
         except Exception as exc:
             errors.append(f"{engine}: {exc}")
-    return "", "OCR tidak tersedia/berhasil. Upload Excel/CSV atau PDF berbasis teks. " + " | ".join(errors[:3])
+    return "", "OCR tidak tersedia/berhasil. Pastikan dependency OCR terpasang, atau upload Excel/CSV/PDF berbasis teks. " + " | ".join(errors[:3])
 
 
-def extract_text_from_pdf_scan(pdf_path, mode="auto", max_pages=5):
+def extract_text_from_pdf_scan(pdf_path, mode="auto", max_pages=25):
     if mode == "disabled":
         return "", "OCR dinonaktifkan."
     try:
@@ -82,16 +90,19 @@ def extract_text_from_pdf_scan(pdf_path, mode="auto", max_pages=5):
     except Exception as exc:
         return "", f"PyMuPDF tidak tersedia untuk render OCR: {exc}"
     texts, notes = [], []
-    with fitz.open(pdf_path) as doc:
-        for i, page in enumerate(doc[:max_pages]):
-            pix = page.get_pixmap(dpi=160)
-            tmp = Path(pdf_path).with_suffix(f".page_{i+1}.png")
-            pix.save(tmp)
-            text, note = extract_text_from_image(tmp, mode)
-            texts.append(text)
-            notes.append(f"Halaman {i+1}: {note}")
-            try:
-                tmp.unlink()
-            except Exception:
-                pass
+    with TemporaryDirectory(prefix="rab_nac_ocr_") as tmp_dir:
+        tmp_root = Path(tmp_dir)
+        with fitz.open(pdf_path) as doc:
+            total_pages = len(doc)
+            pages_to_process = min(total_pages, max_pages)
+            for i in range(pages_to_process):
+                page = doc[i]
+                pix = page.get_pixmap(dpi=220, alpha=False)
+                tmp = tmp_root / f"page_{i + 1}.png"
+                pix.save(tmp)
+                text, note = extract_text_from_image(tmp, mode)
+                texts.append(text)
+                notes.append(f"Halaman {i+1}: {note}")
+            if total_pages > max_pages:
+                notes.append(f"OCR dibatasi {max_pages} dari {total_pages} halaman agar tetap ringan di hosting gratis.")
     return "\n".join(texts), " ".join(notes)

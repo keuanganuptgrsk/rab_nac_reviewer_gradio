@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.8"
-APP_RELEASE_TITLE = "Keyword Card Spacing"
+APP_VERSION = "0.7.9"
+APP_RELEASE_TITLE = "Tesseract OCR Enablement"
 APP_RELEASE_NOTES = (
-    "Jarak antara sinonim/parafrasa dan tombol hapus keyword diperbesar, serta tombol hapus dibuat lebih pendek."
+    "OCR PDF scan diaktifkan melalui pytesseract dan packages.txt Tesseract untuk Hugging Face Spaces."
 )
 
 
