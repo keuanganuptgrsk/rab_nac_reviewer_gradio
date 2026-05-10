@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.0 - Trust Authority UI Rebuild - 2026-05-10
+
+- Menggunakan skill `ui-ux-pro-max` untuk memilih arah desain `Trust & Authority` yang lebih cocok untuk aplikasi finance/compliance.
+- Membangun ulang visual system menjadi slate/navy + green status, Fira Sans/Fira Code, glass cards halus, dan hierarchy yang lebih profesional.
+- Menambahkan hero copy yang menjelaskan fungsi workspace internal.
+- Memperkuat stabilitas width tab di desktop dan mobile dengan shell 1320px, grid tab desktop, dan horizontal tab scroll mobile.
+
 ## v0.6.9 - Perspective Gradient UI - 2026-05-10
 
 - Mengubah UI mengikuti referensi Gradient Pro/Perspective: hero hijau gelap, aksen neon green, pill navigation, dan glass cards.

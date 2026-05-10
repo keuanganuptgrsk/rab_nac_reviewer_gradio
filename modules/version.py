@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.9"
-APP_RELEASE_TITLE = "Perspective Gradient UI"
+APP_VERSION = "0.7.0"
+APP_RELEASE_TITLE = "Trust Authority UI Rebuild"
 APP_RELEASE_NOTES = (
-    "UI diubah mengikuti Gradient Pro/Perspective-inspired style dengan aksen hijau neon, SaaS glass cards, pill navigation, dan width tab yang lebih konsisten."
+    "UI dibangun ulang dengan skill UI/UX Pro Max: trust-authority finance style, tab width stabil, hierarchy lebih jelas, dan hero compliance workspace."
 )
 
 

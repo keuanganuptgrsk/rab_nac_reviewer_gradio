@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent
 db.init_db()
 
 FLUENTLY_THEME_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
 :root {
     --rab-bg: #ffffff;
@@ -730,6 +730,9 @@ input, textarea, select {
 .gradio-container .upload-container,
 .gradio-container [data-testid="block-info"],
 .gradio-container [data-testid="file"],
+.gradio-container [data-testid="file"] > div,
+.gradio-container [data-testid="file"] .wrap,
+.gradio-container [data-testid="file"] .upload-container,
 .gradio-container [data-testid="textbox"],
 .gradio-container [data-testid="button"],
 .gradio-container [data-testid="radio"],
@@ -739,6 +742,37 @@ input, textarea, select {
 .gradio-container [data-testid="html"] {
     max-width: 100% !important;
     box-sizing: border-box !important;
+}
+
+.gradio-container [data-testid="file"] {
+    min-height: 220px !important;
+    overflow: visible !important;
+}
+
+.gradio-container [data-testid="file"] .upload-container {
+    min-height: 180px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+}
+
+#rab-upload-file,
+#rab-upload-file > div,
+#rab-upload-file .wrap,
+#rab-upload-file .upload-container {
+    min-height: 240px !important;
+    height: 240px !important;
+    overflow: visible !important;
+}
+
+#rab-upload-file:focus,
+#rab-upload-file:focus-within,
+#rab-upload-file *:focus,
+#rab-upload-file *:focus-visible {
+    outline: 3px solid rgba(34, 197, 94, 0.32) !important;
+    outline-offset: 2px !important;
+    border-color: rgba(34, 197, 94, 0.45) !important;
 }
 
 .gradio-container [role="tabpanel"] > div,
@@ -755,6 +789,324 @@ input, textarea, select {
 .gradio-container textarea,
 .gradio-container input {
     max-width: 100% !important;
+}
+
+/* UI/UX Pro Max final system: Trust & Authority for finance review tools */
+:root {
+    --rab-primary: #0f172a;
+    --rab-secondary: #334155;
+    --rab-accent: #22c55e;
+    --rab-accent-strong: #16a34a;
+    --rab-accent-soft: #dcfce7;
+    --rab-text: #0f172a;
+    --rab-heading: #0f172a;
+    --rab-muted: #64748b;
+    --rab-border: #d8e2ee;
+    --rab-soft: #f8fafc;
+    --rab-paper: #ffffff;
+    --rab-danger: #ef4444;
+}
+
+html,
+body,
+.gradio-container {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+}
+
+body,
+.gradio-container {
+    background:
+        radial-gradient(circle at 12% 0%, rgba(34, 197, 94, 0.10), transparent 30%),
+        linear-gradient(180deg, #f8fafc 0%, #ffffff 46%, #f1f5f9 100%) !important;
+    color: var(--rab-text) !important;
+    font-family: "Fira Sans", Inter, system-ui, sans-serif !important;
+}
+
+.gradio-container {
+    width: min(calc(100vw - 48px), 1320px) !important;
+    max-width: 1320px !important;
+    margin: 0 auto !important;
+    padding: 32px 24px 56px !important;
+}
+
+.gradio-container > *,
+#app-hero,
+.tabs,
+.tabs > div,
+div[role="tablist"],
+div[role="tabpanel"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+h1, h2, h3,
+.prose h1, .prose h2, .prose h3,
+#app-hero h1,
+.keyword-name,
+.finding-item,
+.redaction-title,
+.learning-title {
+    color: var(--rab-heading) !important;
+    font-family: "Fira Code", "Fira Sans", ui-monospace, monospace !important;
+    letter-spacing: -0.01em !important;
+}
+
+#app-hero {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 12px;
+    background:
+        radial-gradient(circle at 88% 12%, rgba(34, 197, 94, 0.24), transparent 28%),
+        linear-gradient(135deg, #0f172a 0%, #1e293b 58%, #14532d 100%) !important;
+    border-radius: 24px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.22) !important;
+    padding: 36px 40px !important;
+}
+
+#app-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -70px -100px auto;
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.16);
+    filter: blur(6px);
+}
+
+#app-hero h1 {
+    color: #ffffff !important;
+    font-size: clamp(34px, 4vw, 56px) !important;
+    line-height: 1.05 !important;
+    max-width: 920px;
+    margin: 0 !important;
+}
+
+#app-hero p,
+#app-hero .hero-copy {
+    max-width: 820px;
+    color: #cbd5e1 !important;
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+}
+
+#app-hero .version-pill,
+#app-hero .hero-badge {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #bbf7d0 !important;
+    background: rgba(34, 197, 94, 0.12) !important;
+    border: 1px solid rgba(187, 247, 208, 0.24) !important;
+    border-radius: 999px !important;
+    padding: 8px 12px !important;
+    font-family: "Fira Sans", Inter, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+.tabs {
+    overflow: hidden !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid var(--rab-border) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 22px 54px rgba(15, 23, 42, 0.08) !important;
+    backdrop-filter: blur(12px);
+}
+
+div[role="tablist"] {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 68px !important;
+    padding: 10px 12px !important;
+    overflow: visible !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid var(--rab-border) !important;
+}
+
+button[role="tab"],
+.tab-nav button,
+.tabs button {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 46px !important;
+    height: 46px !important;
+    padding: 0 18px !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: transparent !important;
+    color: #475569 !important;
+    font-family: "Fira Sans", Inter, sans-serif !important;
+    font-weight: 700 !important;
+    transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
+}
+
+button[role="tab"]::before,
+button[role="tab"]::after {
+    display: none !important;
+}
+
+button[role="tab"]:focus,
+button[role="tab"]:focus-visible {
+    outline: 3px solid rgba(34, 197, 94, 0.35) !important;
+    outline-offset: 2px !important;
+}
+
+button[role="tab"][aria-selected="true"],
+.tab-nav button.selected,
+.tabs button.selected {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18) !important;
+}
+
+div[role="tabpanel"] {
+    min-height: 760px !important;
+    padding: 28px !important;
+    background: #ffffff !important;
+}
+
+.gradio-container button:not([role="tab"]),
+button.primary,
+.primary > button,
+button[variant="primary"] {
+    min-height: 46px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: #22c55e !important;
+    color: #052e16 !important;
+    box-shadow: 0 12px 24px rgba(34, 197, 94, 0.22) !important;
+    font-family: "Fira Sans", Inter, sans-serif !important;
+    font-weight: 800 !important;
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease !important;
+}
+
+.gradio-container button:not([role="tab"]):hover {
+    background: #16a34a !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+input, textarea, select,
+.gradio-container .wrap,
+.gradio-container .block,
+.gradio-container .form {
+    border-color: var(--rab-border) !important;
+    border-radius: 16px !important;
+    font-family: "Fira Sans", Inter, sans-serif !important;
+}
+
+input, textarea, select {
+    background: #ffffff !important;
+    color: var(--rab-text) !important;
+    min-height: 46px !important;
+}
+
+label,
+.label-wrap span {
+    color: #334155 !important;
+    font-family: "Fira Sans", Inter, sans-serif !important;
+    font-weight: 700 !important;
+}
+
+.finding-card,
+.keyword-card,
+.learning-card,
+.redaction-result,
+.simple-note,
+.keyword-search-panel,
+.redaction-search,
+.findings-toolbar {
+    border: 1px solid var(--rab-border) !important;
+    border-radius: 18px !important;
+    background: #ffffff !important;
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.07) !important;
+    transform: none !important;
+}
+
+.keyword-card:hover,
+.finding-card:hover,
+.learning-card:hover {
+    border-color: rgba(34, 197, 94, 0.55) !important;
+    box-shadow: 0 22px 46px rgba(15, 23, 42, 0.10) !important;
+    transform: translateY(-2px) !important;
+}
+
+.keyword-chip,
+.alias-chip,
+.severity-badge,
+.confidence-pill,
+.learning-count {
+    border: 1px solid rgba(34, 197, 94, 0.18) !important;
+    border-radius: 999px !important;
+    background: #dcfce7 !important;
+    color: #166534 !important;
+    font-family: "Fira Sans", Inter, sans-serif !important;
+    font-weight: 800 !important;
+}
+
+.keyword-delete-btn {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    box-shadow: none !important;
+    border: 1px solid #fecaca !important;
+}
+
+.keyword-delete-btn:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.redaction-score,
+.learning-number,
+.confidence-score {
+    color: #0f172a !important;
+    font-family: "Fira Code", ui-monospace, monospace !important;
+}
+
+.dataframe,
+.table-wrap,
+table {
+    border-radius: 16px !important;
+    border-color: var(--rab-border) !important;
+}
+
+th {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+@media (max-width: 920px) {
+    .gradio-container {
+        width: min(100%, calc(100vw - 24px)) !important;
+        padding: 18px 12px 36px !important;
+    }
+
+    div[role="tablist"] {
+        display: flex !important;
+        overflow-x: auto !important;
+    }
+
+    button[role="tab"] {
+        flex: 0 0 auto !important;
+        min-width: 160px !important;
+    }
+
+    div[role="tabpanel"] {
+        padding: 18px !important;
+    }
 }
 
 .simple-note {
@@ -1741,12 +2093,18 @@ def app():
 <section id="app-hero">
   <div class="version-pill">Versi {APP_VERSION}</div>
   <h1>RAB NAC Reviewer Copilot</h1>
+  <p class="hero-copy">Internal review workspace untuk mendeteksi potensi NAC, mengecek redaksi, dan menjaga audit trail keyword secara sederhana.</p>
 </section>
 """
         )
         with gr.Tabs():
             with gr.Tab("Upload RAB"):
-                file_in = gr.File(label="Upload RAB", file_types=[".xlsx", ".xls", ".csv", ".pdf", ".png", ".jpg", ".jpeg"])
+                file_in = gr.File(
+                    label="Upload RAB",
+                    file_types=[".xlsx", ".xls", ".csv", ".pdf", ".png", ".jpg", ".jpeg"],
+                    height=240,
+                    elem_id="rab-upload-file",
+                )
                 upload_msg = gr.Markdown()
                 preview = gr.Dataframe(label="Preview / Extracted Rows", visible=False)
                 text_cols = gr.Dropdown(label="Kolom teks untuk digabung dan direview", multiselect=True, visible=False)
