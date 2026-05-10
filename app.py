@@ -1184,6 +1184,10 @@ label,
     padding-bottom: 16px !important;
 }
 
+.keyword-card .alias-row {
+    margin-bottom: 18px !important;
+}
+
 .redaction-search,
 .redaction-search > div,
 .redaction-search .block,
@@ -1237,9 +1241,10 @@ label,
     justify-content: center;
     width: auto !important;
     min-width: 0 !important;
-    min-height: 28px !important;
-    margin: 10px 0 0 auto !important;
-    padding: 5px 9px !important;
+    min-height: 0 !important;
+    height: 28px !important;
+    margin: 0 0 0 auto !important;
+    padding: 4px 10px !important;
     background: transparent !important;
     color: #991b1b !important;
     box-shadow: none !important;
@@ -1406,6 +1411,13 @@ table {
     border-radius: 12px;
     pointer-events: none;
     z-index: 1;
+}
+
+.keyword-card .keyword-delete-btn {
+    min-height: 0 !important;
+    height: 28px !important;
+    max-height: 28px !important;
+    padding: 4px 10px !important;
 }
 
 th {

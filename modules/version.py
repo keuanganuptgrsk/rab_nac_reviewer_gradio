@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.7"
-APP_RELEASE_TITLE = "Version Safe Padding"
+APP_VERSION = "0.7.8"
+APP_RELEASE_TITLE = "Keyword Card Spacing"
 APP_RELEASE_NOTES = (
-    "Label versi diberi spacer dan padding ekstra agar huruf awal tidak terpotong di pojok kiri atas."
+    "Jarak antara sinonim/parafrasa dan tombol hapus keyword diperbesar, serta tombol hapus dibuat lebih pendek."
 )
 
 

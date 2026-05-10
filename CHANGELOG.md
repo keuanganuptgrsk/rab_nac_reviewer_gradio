@@ -2,6 +2,11 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.8 - Keyword Card Spacing - 2026-05-10
+
+- Menambahkan breathing room antara chip sinonim/parafrasa dan tombol `Hapus`.
+- Memaksa tombol `Hapus` menjadi chip pendek agar tidak terasa seperti blok yang mengganggu isi card.
+
 ## v0.7.7 - Version Safe Padding - 2026-05-10
 
 - Menambahkan spacer dan padding ekstra pada label versi agar huruf awal `V` tidak terpotong di pojok kiri atas.
