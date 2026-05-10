@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.6.8 - Gradient UI and Stable Width - 2026-05-10
+
+- Mengubah UI dari doodle ke TypeUI Gradient-inspired style: purple-to-pink gradients, Montserrat, Space Grotesk, glass cards, dan gradient actions.
+- Mengunci shell, tab list, dan tab panel ke width yang konsisten agar layout tidak berubah saat pindah tab.
+- Memperbaiki hapus keyword langsung dari card memakai event delegation global agar tetap berjalan setelah card dirender ulang.
+- Mencatat bahwa TypeUI CLI tidak dapat dijalankan di environment lokal karena `npx` tidak tersedia, sehingga skill diterapkan dari dokumentasi TypeUI Gradient.
+
 ## v0.6.7 - Doodle UI and Card Delete - 2026-05-10
 
 - Mengubah UI ke arah doodle/sketch-inspired dengan border tebal, shadow offset, dan font Delius Swash Caps.

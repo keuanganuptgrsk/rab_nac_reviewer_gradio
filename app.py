@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent
 db.init_db()
 
 FLUENTLY_THEME_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Delius+Swash+Caps&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
 
 :root {
     --rab-bg: #ffffff;
@@ -56,7 +56,7 @@ body,
         radial-gradient(circle at 88% 8%, rgba(217, 119, 6, 0.10), transparent 22%),
         linear-gradient(180deg, #ffffff 0%, #f8fcff 100%) !important;
     color: var(--rab-text) !important;
-    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
+    font-family: "Montserrat", Inter, ui-sans-serif, system-ui, sans-serif !important;
 }
 
 .gradio-container {
@@ -66,7 +66,7 @@ body,
 }
 
 h1, h2, h3, .prose h1, .prose h2, .prose h3 {
-    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
+    font-family: "Space Grotesk", "Montserrat", Inter, sans-serif !important;
     color: var(--rab-heading) !important;
     letter-spacing: 0 !important;
 }
@@ -155,7 +155,7 @@ button[title="More"],
 
 .tab-nav button,
 .tabs button {
-    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
+    font-family: "Montserrat", Inter, sans-serif !important;
     font-weight: 650 !important;
     color: var(--rab-muted) !important;
     border-radius: 8px 8px 0 0 !important;
@@ -180,7 +180,7 @@ button[variant="primary"] {
 
 button {
     border-radius: 13px 17px 12px 18px !important;
-    font-family: "Delius Swash Caps", "Comic Sans MS", cursive !important;
+    font-family: "Montserrat", Inter, sans-serif !important;
     font-weight: 700 !important;
 }
 
@@ -541,7 +541,7 @@ a {
     color: #991b1b;
     border-radius: 13px 17px 12px 18px;
     padding: 9px 12px;
-    font-family: "Delius Swash Caps", "Comic Sans MS", cursive;
+    font-family: "Montserrat", Inter, sans-serif;
     font-weight: 850;
     cursor: pointer;
     box-shadow: 4px 4px 0 rgba(220, 38, 38, 0.18);
@@ -559,6 +559,157 @@ a {
     overflow: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
+}
+
+/* Gradient design skill override: purple-to-pink axis, modern geometry, stable app shell */
+body,
+.gradio-container {
+    background:
+        radial-gradient(circle at 12% 8%, rgba(153, 15, 250, 0.18), transparent 32%),
+        radial-gradient(circle at 90% 4%, rgba(230, 0, 118, 0.16), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #fbf7ff 42%, #fff5fa 100%) !important;
+    font-family: "Montserrat", Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.gradio-container {
+    width: min(100%, 1440px) !important;
+    max-width: 1440px !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.gradio-container > *,
+.gradio-container .tabs,
+.gradio-container [role="tablist"],
+.gradio-container [role="tabpanel"],
+.gradio-container [data-testid="tabs"],
+.gradio-container .tabitem,
+.gradio-container .form,
+.gradio-container .block,
+.gradio-container .wrap,
+.gradio-container .container,
+#app-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+h1, h2, h3, .prose h1, .prose h2, .prose h3,
+#app-hero h1,
+.keyword-name,
+.finding-item,
+.redaction-title,
+.learning-title {
+    font-family: "Space Grotesk", "Montserrat", Inter, sans-serif !important;
+}
+
+#app-hero {
+    background:
+        linear-gradient(135deg, rgba(153, 15, 250, 0.95) 0%, rgba(208, 0, 185, 0.92) 46%, rgba(230, 0, 118, 0.92) 100%) !important;
+    border: 0 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 28px 70px rgba(153, 15, 250, 0.28) !important;
+    transform: none !important;
+}
+
+#app-hero h1,
+#app-hero .version-pill {
+    color: #ffffff !important;
+}
+
+#app-hero .version-pill {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    border-radius: 999px !important;
+}
+
+.tabs {
+    border: 1px solid rgba(153, 15, 250, 0.14) !important;
+    border-radius: 22px !important;
+    background: rgba(255, 255, 255, 0.86) !important;
+    box-shadow: 0 18px 44px rgba(17, 24, 39, 0.08) !important;
+    overflow: hidden !important;
+}
+
+div[role="tabpanel"] {
+    min-height: 780px !important;
+    padding: 24px !important;
+}
+
+.tab-nav button,
+.tabs button,
+button[role="tab"] {
+    font-family: "Montserrat", Inter, sans-serif !important;
+    border-radius: 999px !important;
+}
+
+.tab-nav button.selected,
+.tabs button.selected,
+button[role="tab"][aria-selected="true"] {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #990FFA 0%, #E60076 100%) !important;
+}
+
+button.primary,
+.primary > button,
+button[variant="primary"],
+.gradio-container button:not([role="tab"]) {
+    border: 0 !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #990FFA 0%, #E60076 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 16px 32px rgba(153, 15, 250, 0.24) !important;
+    transform: none !important;
+    font-family: "Montserrat", Inter, sans-serif !important;
+}
+
+input, textarea, select {
+    border: 1px solid rgba(153, 15, 250, 0.26) !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    font-family: "Montserrat", Inter, sans-serif !important;
+}
+
+.finding-card,
+.keyword-card,
+.learning-card,
+.redaction-result,
+.simple-note,
+.keyword-search-panel,
+.redaction-search {
+    border: 1px solid rgba(153, 15, 250, 0.16) !important;
+    border-radius: 24px !important;
+    background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(135deg, rgba(153, 15, 250, 0.70), rgba(230, 0, 118, 0.62)) border-box !important;
+    box-shadow: 0 20px 48px rgba(17, 24, 39, 0.08) !important;
+    transform: none !important;
+}
+
+.keyword-card:hover,
+.finding-card:hover {
+    box-shadow: 0 28px 64px rgba(153, 15, 250, 0.18) !important;
+    transform: translateY(-2px) !important;
+}
+
+.keyword-chip,
+.alias-chip,
+.severity-badge,
+.confidence-pill,
+.learning-count {
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, rgba(153, 15, 250, 0.12), rgba(230, 0, 118, 0.12)) !important;
+    color: #6d0bb8 !important;
+}
+
+.keyword-delete-btn {
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #DC2626 0%, #E60076 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 14px 28px rgba(220, 38, 38, 0.20) !important;
+    font-family: "Montserrat", Inter, sans-serif !important;
 }
 
 .simple-note {
@@ -1293,7 +1444,7 @@ def render_keyword_cards(query=""):
             f"<div class='keyword-desc'>{desc}</div>"
             "<div class='alias-label'>Sinonim/parafrasa yang dipakai sistem</div>"
             f"<div class='alias-row'>{alias_html}</div>"
-            f"<button class='keyword-delete-btn' type='button' onclick=\"window.rabDeleteKeyword && window.rabDeleteKeyword('{keyword_id}')\">Hapus keyword</button>"
+            f"<button class='keyword-delete-btn' type='button' data-delete-keyword-id='{keyword_id}'>Hapus keyword</button>"
             "</div>"
         )
 
@@ -1302,14 +1453,6 @@ def render_keyword_cards(query=""):
 
     return (
         "<div class='keyword-workspace'>"
-        "<script>"
-        "window.rabDeleteKeyword=function(id){"
-        "const wrap=document.querySelector('#delete-kw-id');"
-        "const input=wrap&&wrap.querySelector('textarea,input');"
-        "const btn=document.querySelector('#delete-kw-trigger button');"
-        "if(input&&btn){input.value=id;input.dispatchEvent(new Event('input',{bubbles:true}));btn.click();}"
-        "};"
-        "</script>"
         "<div class='keyword-search-panel'>"
         "<div class='keyword-search-head'>"
         f"<div class='keyword-search-title'>{html.escape(query or 'Keyword NAC')}</div>"
@@ -1499,6 +1642,27 @@ def save_simple_settings_ui(review_mode, semantic_mode, ocr_mode):
     return f"Settings tersimpan: mode review {review_mode}, semantic {semantic_mode}, OCR {ocr_mode}."
 
 
+DELETE_KEYWORD_JS = """
+() => {
+  if (window.__rabNacDeleteKeywordBound) return;
+  window.__rabNacDeleteKeywordBound = true;
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-delete-keyword-id]");
+    if (!button) return;
+    event.preventDefault();
+    const keywordId = button.getAttribute("data-delete-keyword-id");
+    const input = document.querySelector("#delete-kw-id textarea, #delete-kw-id input");
+    const trigger = document.querySelector("#delete-kw-trigger button");
+    if (!input || !trigger) return;
+    input.value = keywordId;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    trigger.click();
+  });
+}
+"""
+
+
 def reset_db_ui():
     db.reset_demo_database()
     return "Demo database direset."
@@ -1669,6 +1833,7 @@ def app():
         restore_btn.click(restore_ui, restore_file, restore_msg)
         save_set.click(save_simple_settings_ui, [review_mode, semantic_mode, ocr_mode], settings_msg)
         reset_db.click(reset_db_ui, outputs=settings_msg)
+        demo.load(None, None, None, js=DELETE_KEYWORD_JS)
     return demo
 
 

@@ -1,7 +1,7 @@
-APP_VERSION = "0.6.7"
-APP_RELEASE_TITLE = "Doodle UI and Card Delete"
+APP_VERSION = "0.6.8"
+APP_RELEASE_TITLE = "Gradient UI and Stable Width"
 APP_RELEASE_NOTES = (
-    "UI diganti ke gaya doodle, layout tab dibuat lebih konsisten, keyword bisa dihapus langsung dari card, dan PaddleOCR diprioritaskan sebagai OCR optional."
+    "UI mengikuti TypeUI Gradient skill, width tab distabilkan, dan hapus keyword via card dibuat lebih andal dengan event delegation."
 )
 
 
