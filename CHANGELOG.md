@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.7.1 - ColorHunt Palette and Tab Polish - 2026-05-10
+
+- Mengganti color palette ke ColorHunt: `#E8EDF2`, `#2C3947`, `#547A95`, `#C2A56D`.
+- Memperbesar tinggi tab list dan tab button agar label tidak terpotong dan tetap center secara vertikal.
+- Menyederhanakan area upload dengan menyembunyikan teks `Drop File Here` dan hanya menonjolkan `Click to Upload`.
+- Mengganti focus ring upload dari hijau ke aksen gold sesuai palette baru.
+
 ## v0.7.0 - Trust Authority UI Rebuild - 2026-05-10
 
 - Menggunakan skill `ui-ux-pro-max` untuk memilih arah desain `Trust & Authority` yang lebih cocok untuk aplikasi finance/compliance.

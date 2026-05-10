@@ -766,13 +766,52 @@ input, textarea, select {
     overflow: visible !important;
 }
 
+#rab-upload-file [data-testid="file"],
+#rab-upload-file .upload-container {
+    background: #ffffff !important;
+}
+
+#rab-upload-file svg,
+#rab-upload-file [data-testid="upload-icon"],
+#rab-upload-file .upload-icon {
+    display: none !important;
+}
+
+#rab-upload-file {
+    font-size: 0 !important;
+    color: transparent !important;
+}
+
+#rab-upload-file button,
+#rab-upload-file label {
+    font-size: 14px !important;
+}
+
+#rab-upload-file span,
+#rab-upload-file p,
+#rab-upload-file div:not(:has(button)) {
+    color: transparent !important;
+}
+
+#rab-upload-file::after {
+    content: "Click to Upload";
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -50%);
+    color: #547A95;
+    font-size: 20px;
+    font-weight: 800;
+    pointer-events: none;
+}
+
 #rab-upload-file:focus,
 #rab-upload-file:focus-within,
 #rab-upload-file *:focus,
 #rab-upload-file *:focus-visible {
-    outline: 3px solid rgba(34, 197, 94, 0.32) !important;
+    outline: 3px solid rgba(194, 165, 109, 0.32) !important;
     outline-offset: 2px !important;
-    border-color: rgba(34, 197, 94, 0.45) !important;
+    border-color: rgba(194, 165, 109, 0.45) !important;
 }
 
 .gradio-container [role="tabpanel"] > div,
@@ -793,16 +832,16 @@ input, textarea, select {
 
 /* UI/UX Pro Max final system: Trust & Authority for finance review tools */
 :root {
-    --rab-primary: #0f172a;
-    --rab-secondary: #334155;
-    --rab-accent: #22c55e;
-    --rab-accent-strong: #16a34a;
-    --rab-accent-soft: #dcfce7;
-    --rab-text: #0f172a;
-    --rab-heading: #0f172a;
-    --rab-muted: #64748b;
-    --rab-border: #d8e2ee;
-    --rab-soft: #f8fafc;
+    --rab-primary: #2C3947;
+    --rab-secondary: #547A95;
+    --rab-accent: #C2A56D;
+    --rab-accent-strong: #A9894E;
+    --rab-accent-soft: #F3EBD8;
+    --rab-text: #2C3947;
+    --rab-heading: #2C3947;
+    --rab-muted: #547A95;
+    --rab-border: #C9D4DF;
+    --rab-soft: #E8EDF2;
     --rab-paper: #ffffff;
     --rab-danger: #ef4444;
 }
@@ -817,8 +856,8 @@ body,
 body,
 .gradio-container {
     background:
-        radial-gradient(circle at 12% 0%, rgba(34, 197, 94, 0.10), transparent 30%),
-        linear-gradient(180deg, #f8fafc 0%, #ffffff 46%, #f1f5f9 100%) !important;
+        radial-gradient(circle at 12% 0%, rgba(194, 165, 109, 0.16), transparent 30%),
+        linear-gradient(180deg, #E8EDF2 0%, #ffffff 46%, #E8EDF2 100%) !important;
     color: var(--rab-text) !important;
     font-family: "Fira Sans", Inter, system-ui, sans-serif !important;
 }
@@ -859,8 +898,8 @@ h1, h2, h3,
     display: grid;
     gap: 12px;
     background:
-        radial-gradient(circle at 88% 12%, rgba(34, 197, 94, 0.24), transparent 28%),
-        linear-gradient(135deg, #0f172a 0%, #1e293b 58%, #14532d 100%) !important;
+        radial-gradient(circle at 88% 12%, rgba(194, 165, 109, 0.28), transparent 28%),
+        linear-gradient(135deg, #2C3947 0%, #33475A 58%, #547A95 100%) !important;
     border-radius: 24px !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     box-shadow: 0 28px 70px rgba(15, 23, 42, 0.22) !important;
@@ -901,9 +940,9 @@ h1, h2, h3,
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #bbf7d0 !important;
-    background: rgba(34, 197, 94, 0.12) !important;
-    border: 1px solid rgba(187, 247, 208, 0.24) !important;
+    color: #fff7e3 !important;
+    background: rgba(194, 165, 109, 0.20) !important;
+    border: 1px solid rgba(194, 165, 109, 0.36) !important;
     border-radius: 999px !important;
     padding: 8px 12px !important;
     font-family: "Fira Sans", Inter, sans-serif !important;
@@ -924,8 +963,9 @@ div[role="tablist"] {
     display: grid !important;
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     align-items: center !important;
-    gap: 8px !important;
-    min-height: 68px !important;
+    gap: 10px !important;
+    min-height: 82px !important;
+    height: 82px !important;
     padding: 10px 12px !important;
     overflow: visible !important;
     background: #f8fafc !important;
@@ -937,8 +977,8 @@ button[role="tab"],
 .tabs button {
     display: inline-flex !important;
     align-items: center !important;
-    min-height: 46px !important;
-    height: 46px !important;
+    min-height: 52px !important;
+    height: 52px !important;
     padding: 0 18px !important;
     margin: 0 !important;
     line-height: 1 !important;
@@ -950,6 +990,7 @@ button[role="tab"],
     color: #475569 !important;
     font-family: "Fira Sans", Inter, sans-serif !important;
     font-weight: 700 !important;
+    overflow: visible !important;
     transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
 }
 
@@ -960,14 +1001,14 @@ button[role="tab"]::after {
 
 button[role="tab"]:focus,
 button[role="tab"]:focus-visible {
-    outline: 3px solid rgba(34, 197, 94, 0.35) !important;
+    outline: 3px solid rgba(194, 165, 109, 0.35) !important;
     outline-offset: 2px !important;
 }
 
 button[role="tab"][aria-selected="true"],
 .tab-nav button.selected,
 .tabs button.selected {
-    background: #0f172a !important;
+    background: #2C3947 !important;
     color: #ffffff !important;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18) !important;
 }
@@ -985,16 +1026,16 @@ button[variant="primary"] {
     min-height: 46px !important;
     border: 0 !important;
     border-radius: 14px !important;
-    background: #22c55e !important;
-    color: #052e16 !important;
-    box-shadow: 0 12px 24px rgba(34, 197, 94, 0.22) !important;
+    background: #C2A56D !important;
+    color: #2C3947 !important;
+    box-shadow: 0 12px 24px rgba(194, 165, 109, 0.24) !important;
     font-family: "Fira Sans", Inter, sans-serif !important;
     font-weight: 800 !important;
     transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease !important;
 }
 
 .gradio-container button:not([role="tab"]):hover {
-    background: #16a34a !important;
+    background: #A9894E !important;
     color: #ffffff !important;
     transform: translateY(-1px) !important;
 }
@@ -1039,7 +1080,7 @@ label,
 .keyword-card:hover,
 .finding-card:hover,
 .learning-card:hover {
-    border-color: rgba(34, 197, 94, 0.55) !important;
+    border-color: rgba(194, 165, 109, 0.65) !important;
     box-shadow: 0 22px 46px rgba(15, 23, 42, 0.10) !important;
     transform: translateY(-2px) !important;
 }
@@ -1051,8 +1092,8 @@ label,
 .learning-count {
     border: 1px solid rgba(34, 197, 94, 0.18) !important;
     border-radius: 999px !important;
-    background: #dcfce7 !important;
-    color: #166534 !important;
+    background: #F3EBD8 !important;
+    color: #2C3947 !important;
     font-family: "Fira Sans", Inter, sans-serif !important;
     font-weight: 800 !important;
 }
