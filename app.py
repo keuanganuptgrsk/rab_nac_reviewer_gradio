@@ -1861,24 +1861,26 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
             gr.update(value="", visible=False),
             gr.update(value="", visible=False),
             [],
-            msg,
-            gr.update(value=pd.DataFrame(), visible=False),
-            gr.update(visible=False),
-            gr.update(visible=False),
-            gr.update(visible=False),
+            gr.update(value=f"Review belum dapat dijalankan. {msg}", visible=True),
             gr.update(visible=False),
             gr.update(visible=False),
         )
-    results = detect_items(items, db.get_settings())
+    try:
+        results = detect_items(items, db.get_settings())
+    except Exception as exc:
+        return (
+            gr.update(value="", visible=False),
+            gr.update(value="", visible=False),
+            [],
+            gr.update(value=f"Review gagal diproses: {exc}", visible=True),
+            gr.update(visible=False),
+            gr.update(visible=False),
+        )
     return (
         gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
         gr.update(value=render_all_materials_table(results), visible=True),
         results,
-        f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
-        gr.update(value=pd.DataFrame(), visible=False),
-        gr.update(visible=True),
-        gr.update(visible=True),
-        gr.update(visible=True),
+        gr.update(value=f"Review selesai. {msg} Output pertama menampilkan confidence Sedang sampai Sangat tinggi. Output kedua menampilkan seluruh item RAB. {DISCLAIMER}", visible=True),
         gr.update(visible=True),
         gr.update(visible=True),
     )
@@ -1886,7 +1888,7 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
 
 def auto_run_review(upload_state):
     if not upload_state:
-        return pd.DataFrame(), [], "Upload file dahulu."
+        return "", "", [], "Upload file dahulu."
     detected = upload_state.get("detected", {})
     columns = upload_state.get("columns", [])
     text_columns = ["review_text"] if "review_text" in columns else [
@@ -1903,7 +1905,7 @@ def auto_run_review(upload_state):
         "Confidence",
         "Tinggi ke rendah",
     )
-    return review_outputs[0], review_outputs[2], review_outputs[3]
+    return review_outputs[0], review_outputs[1], review_outputs[2], review_outputs[3]
 
 
 def review_summary_dataframe(results):
@@ -2038,6 +2040,7 @@ def reset_analysis_visibility():
     return (
         gr.update(visible=False),
         gr.update(visible=False),
+        gr.update(value="", visible=False),
         gr.update(value="", visible=False),
         gr.update(value="", visible=False),
     )
@@ -2726,7 +2729,6 @@ def app():
                         )
                 all_materials_df = gr.HTML(visible=False)
                 result_msg = gr.Markdown(visible=False)
-                results_df = gr.Dataframe(label="Review Hasil", visible=False)
             with gr.Tab("Analisa Redaksi NAC"):
                 gr.Markdown("Ketik satu kalimat redaksi RAB. Sistem akan menghitung potensi NAC sebagai bantuan awal review internal.")
                 with gr.Group(elem_classes=["redaction-search"]):
@@ -2779,7 +2781,7 @@ def app():
             [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
         ).then(
             reset_analysis_visibility,
-            outputs=[sort_panel, export_panel, auto_results_df, all_materials_df],
+            outputs=[sort_panel, export_panel, auto_results_df, all_materials_df, result_msg],
         )
         run_btn.click(
             review_started_ui,
@@ -2793,12 +2795,8 @@ def app():
                 all_materials_df,
                 results_state,
                 result_msg,
-                results_df,
                 sort_panel,
                 export_panel,
-                export_potential_pdf_btn,
-                export_all_pdf_btn,
-                export_all_excel_btn,
             ],
         ).then(
             review_finished_ui,

@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.8.2 - Run Review Output Chain Fix - 2026-05-11
+
+- Menyederhanakan output chain `Run NAC Review` agar hanya mengupdate card summary, tabel HTML seluruh item RAB, state hasil, status review, sort panel, dan export panel.
+- Menghapus komponen lama `Review Hasil` dari chain review agar tidak memutus rendering atau menampilkan tabel terpotong.
+- Menjaga tombol export tetap mengambil `results_state` saat diklik, bukan diupdate langsung oleh proses review.
+- Menambahkan fallback error message bila proses review gagal agar user tidak melihat layar kosong.
+
 ## v0.8.1 - Review Contrast Fix - 2026-05-11
 
 - Menyembunyikan komponen lama `Review Hasil` berbasis Gradio DataFrame yang menyebabkan teks/tabel terpotong dan kontras buruk.
