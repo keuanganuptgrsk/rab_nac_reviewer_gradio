@@ -2,6 +2,11 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.8.3 - Export Button Chain Fix - 2026-05-11
+
+- Mengubah tombol export agar tidak otomatis membuat PDF/Excel saat `results_state` berubah.
+- Export PDF/Excel sekarang hanya diproses saat user menekan tombol export, sehingga chain `Run NAC Review` tidak terganggu.
+
 ## v0.8.2 - Run Review Output Chain Fix - 2026-05-11
 
 - Menyederhanakan output chain `Run NAC Review` agar hanya mengupdate card summary, tabel HTML seluruh item RAB, state hasil, status review, sort panel, dan export panel.

@@ -1,7 +1,7 @@
-APP_VERSION = "0.8.2"
-APP_RELEASE_TITLE = "Run Review Output Chain Fix"
+APP_VERSION = "0.8.3"
+APP_RELEASE_TITLE = "Export Button Chain Fix"
 APP_RELEASE_NOTES = (
-    "Output Run NAC Review distabilkan agar hanya mengupdate card summary, tabel HTML, state hasil, status, sort panel, dan export panel."
+    "Tombol export tidak lagi otomatis berjalan saat hasil review berubah; export hanya diproses saat tombol diklik."
 )
 
 

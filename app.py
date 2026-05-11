@@ -2712,21 +2712,9 @@ def app():
                 auto_results_df = gr.HTML(visible=False)
                 with gr.Group(visible=False) as export_panel:
                     with gr.Row():
-                        export_potential_pdf_btn = gr.DownloadButton(
-                            "Export PDF Rangkuman Potensi NAC",
-                            value=export_potential_pdf_ui,
-                            inputs=results_state,
-                        )
-                        export_all_pdf_btn = gr.DownloadButton(
-                            "Export PDF Seluruh Material RAB",
-                            value=export_all_pdf_ui,
-                            inputs=results_state,
-                        )
-                        export_all_excel_btn = gr.DownloadButton(
-                            "Export Excel Seluruh Material RAB",
-                            value=export_all_excel_ui,
-                            inputs=results_state,
-                        )
+                        export_potential_pdf_btn = gr.DownloadButton("Export PDF Rangkuman Potensi NAC")
+                        export_all_pdf_btn = gr.DownloadButton("Export PDF Seluruh Material RAB")
+                        export_all_excel_btn = gr.DownloadButton("Export Excel Seluruh Material RAB")
                 all_materials_df = gr.HTML(visible=False)
                 result_msg = gr.Markdown(visible=False)
             with gr.Tab("Analisa Redaksi NAC"):
@@ -2804,6 +2792,21 @@ def app():
         )
         sort_by.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
         sort_order.change(render_sorted_findings, [results_state, sort_by, sort_order], auto_results_df)
+        export_potential_pdf_btn.click(
+            export_potential_pdf_ui,
+            inputs=results_state,
+            outputs=export_potential_pdf_btn,
+        )
+        export_all_pdf_btn.click(
+            export_all_pdf_ui,
+            inputs=results_state,
+            outputs=export_all_pdf_btn,
+        )
+        export_all_excel_btn.click(
+            export_all_excel_ui,
+            inputs=results_state,
+            outputs=export_all_excel_btn,
+        )
         redaction_btn.click(analyze_redaction_ui, redaction_text, redaction_result)
         redaction_text.submit(analyze_redaction_ui, redaction_text, redaction_result)
         redaction_text.change(analyze_redaction_ui, redaction_text, redaction_result)
