@@ -2,6 +2,11 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.8.1 - Review Contrast Fix - 2026-05-11
+
+- Menyembunyikan komponen lama `Review Hasil` berbasis Gradio DataFrame yang menyebabkan teks/tabel terpotong dan kontras buruk.
+- Menambahkan override warna font untuk tabel hasil agar teks tetap gelap dan terbaca di background terang.
+
 ## v0.8.0 - Review Output UX Audit - 2026-05-11
 
 - Mengganti output tabel Gradio setelah `Run NAC Review` menjadi tabel HTML custom agar tidak terpotong.

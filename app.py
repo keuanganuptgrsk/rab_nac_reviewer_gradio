@@ -1565,6 +1565,32 @@ th {
     background: #eef3f8 !important;
 }
 
+.gradio-container [data-testid="dataframe"],
+.gradio-container [data-testid="dataframe"] *,
+.dataframe,
+.dataframe *,
+.table-wrap,
+.table-wrap * {
+    color: #1f2d3d !important;
+}
+
+.gradio-container [data-testid="dataframe"] th,
+.gradio-container [data-testid="dataframe"] td,
+.dataframe th,
+.dataframe td,
+.table-wrap th,
+.table-wrap td {
+    background-color: #ffffff !important;
+    color: #1f2d3d !important;
+}
+
+.gradio-container [data-testid="dataframe"] th,
+.dataframe th,
+.table-wrap th {
+    background-color: #eef3f8 !important;
+    color: #2C3947 !important;
+}
+
 @media (max-width: 920px) {
     .gradio-container {
         width: min(100%, calc(100vw - 24px)) !important;
@@ -1844,13 +1870,12 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
             gr.update(visible=False),
         )
     results = detect_items(items, db.get_settings())
-    summary = review_summary_dataframe(results)
     return (
         gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
         gr.update(value=render_all_materials_table(results), visible=True),
         results,
         f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
-        gr.update(value=summary, visible=True),
+        gr.update(value=pd.DataFrame(), visible=False),
         gr.update(visible=True),
         gr.update(visible=True),
         gr.update(visible=True),

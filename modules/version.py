@@ -1,7 +1,7 @@
-APP_VERSION = "0.8.0"
-APP_RELEASE_TITLE = "Review Output UX Audit"
+APP_VERSION = "0.8.1"
+APP_RELEASE_TITLE = "Review Contrast Fix"
 APP_RELEASE_NOTES = (
-    "Output Run NAC Review diubah menjadi ringkasan kartu dan tabel HTML seluruh material yang stabil serta bisa disort langsung."
+    "Komponen tabel lama Review Hasil disembunyikan dan kontras font tabel hasil diperbaiki."
 )
 
 
