@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.8.0 - Review Output UX Audit - 2026-05-11
+
+- Mengganti output tabel Gradio setelah `Run NAC Review` menjadi tabel HTML custom agar tidak terpotong.
+- Menjadikan output pertama sebagai ringkasan kartu potensi NAC confidence Sedang sampai Sangat tinggi.
+- Menambahkan tabel seluruh item RAB yang bisa disort langsung dari header kolom di UI.
+- Merapikan spacing output review agar tombol export dan tabel tidak saling menutup.
+
 ## v0.7.9 - Tesseract OCR Enablement - 2026-05-10
 
 - Menambahkan `pytesseract` ke requirements dan `packages.txt` untuk memasang Tesseract OCR di Hugging Face Spaces.

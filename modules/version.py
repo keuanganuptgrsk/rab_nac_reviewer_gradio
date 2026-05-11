@@ -1,7 +1,7 @@
-APP_VERSION = "0.7.9"
-APP_RELEASE_TITLE = "Tesseract OCR Enablement"
+APP_VERSION = "0.8.0"
+APP_RELEASE_TITLE = "Review Output UX Audit"
 APP_RELEASE_NOTES = (
-    "OCR PDF scan diaktifkan melalui pytesseract dan packages.txt Tesseract untuk Hugging Face Spaces."
+    "Output Run NAC Review diubah menjadi ringkasan kartu dan tabel HTML seluruh material yang stabil serta bisa disort langsung."
 )
 
 

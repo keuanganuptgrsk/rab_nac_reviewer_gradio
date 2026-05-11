@@ -380,6 +380,113 @@ a {
     font-weight: 650;
 }
 
+.review-output-shell {
+    display: grid;
+    gap: 22px;
+    margin-top: 22px;
+}
+
+.materials-table-panel {
+    border: 1px solid var(--rab-border);
+    border-radius: 14px;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.materials-table-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--rab-border);
+    background: #f8fafc;
+}
+
+.materials-table-title {
+    color: var(--rab-primary);
+    font-size: 18px;
+    font-weight: 850;
+}
+
+.materials-table-copy {
+    color: var(--rab-secondary);
+    font-size: 13px;
+    line-height: 1.45;
+    margin-top: 4px;
+}
+
+.materials-table-wrap {
+    max-height: 520px;
+    overflow: auto;
+}
+
+.materials-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-family: "Fira Sans", Inter, sans-serif;
+}
+
+.materials-table th,
+.materials-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #e5edf5;
+    text-align: left;
+    vertical-align: top;
+    color: #1f2d3d;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.materials-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #eef3f8 !important;
+}
+
+.materials-sort-header {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: #2C3947 !important;
+    box-shadow: none !important;
+    font: inherit !important;
+    font-weight: 850 !important;
+    cursor: pointer;
+}
+
+.materials-sort-header::after {
+    content: "↕";
+    color: #547A95;
+    font-size: 12px;
+}
+
+.materials-table tr:hover td {
+    background: #f8fbff;
+}
+
+.materials-confidence {
+    font-weight: 850;
+    color: #2C3947;
+    white-space: nowrap;
+}
+
+.materials-level {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 850;
+}
+
 .keyword-workspace {
     display: flex;
     flex-direction: column;
@@ -1425,6 +1532,39 @@ th {
     color: #0f172a !important;
 }
 
+.materials-table-panel,
+.materials-table-panel * {
+    box-sizing: border-box;
+}
+
+.materials-table-panel {
+    margin-top: 18px !important;
+}
+
+.materials-table-panel .materials-sort-header,
+.materials-table-panel .materials-sort-header:hover,
+.materials-table-panel .materials-sort-header:focus,
+.materials-table-panel .materials-sort-header:focus-visible {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    color: #2C3947 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+.materials-table-panel .materials-table th,
+.materials-table-panel .materials-table td {
+    color: #1f2d3d !important;
+}
+
+.materials-table-panel .materials-table th {
+    background: #eef3f8 !important;
+}
+
 @media (max-width: 920px) {
     .gradio-container {
         width: min(100%, calc(100vw - 24px)) !important;
@@ -1693,7 +1833,7 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
     if not items:
         return (
             gr.update(value="", visible=False),
-            gr.update(value=pd.DataFrame(), visible=False),
+            gr.update(value="", visible=False),
             [],
             msg,
             gr.update(value=pd.DataFrame(), visible=False),
@@ -1705,10 +1845,9 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
         )
     results = detect_items(items, db.get_settings())
     summary = review_summary_dataframe(results)
-    all_materials = all_materials_dataframe(results)
     return (
         gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
-        gr.update(value=all_materials, visible=True),
+        gr.update(value=render_all_materials_table(results), visible=True),
         results,
         f"Review selesai. {msg} Ditampilkan hanya confidence Sedang sampai Sangat tinggi. {DISCLAIMER}",
         gr.update(value=summary, visible=True),
@@ -1807,6 +1946,65 @@ def all_materials_dataframe(results):
     return frame.rename(columns=labels)
 
 
+def render_all_materials_table(results):
+    frame = pd.DataFrame(results or [])
+    if frame.empty:
+        return _empty_findings("Belum ada tabel material. Upload RAB lalu tekan Run NAC Review.")
+    columns = ["row_id", "item_per_rab", "matched_category", "final_confidence", "confidence_label"]
+    for col in columns:
+        if col not in frame.columns:
+            frame[col] = ""
+    frame = frame[columns].copy()
+    frame["matched_category"] = frame["matched_category"].replace("", "-").fillna("-")
+    frame["item_per_rab"] = frame["item_per_rab"].replace("", "-").fillna("-")
+    frame["confidence_label"] = frame["confidence_label"].replace("", "Sangat rendah").fillna("Sangat rendah")
+    frame["final_confidence"] = pd.to_numeric(frame["final_confidence"], errors="coerce").fillna(0).round(2)
+    frame["_row_sort"] = frame["row_id"].apply(_row_sort_key)
+    frame = frame.sort_values("_row_sort", na_position="last")
+
+    rows = []
+    for _, row in frame.iterrows():
+        score = _safe_float(row.get("final_confidence", 0))
+        level = str(row.get("confidence_label") or "Sangat rendah")
+        level_class = _level_class(level)
+        rows.append(
+            "<tr "
+            f"data-row='{html.escape(str(row.get('_row_sort', '999999')))}' "
+            f"data-name='{html.escape(str(row.get('item_per_rab') or '').lower())}' "
+            f"data-category='{html.escape(str(row.get('matched_category') or '').lower())}' "
+            f"data-confidence='{score:.4f}' "
+            f"data-level='{html.escape(level.lower())}'>"
+            f"<td>{html.escape(str(row.get('row_id') or '-'))}</td>"
+            f"<td>{html.escape(str(row.get('item_per_rab') or '-'))}</td>"
+            f"<td>{html.escape(str(row.get('matched_category') or '-'))}</td>"
+            f"<td><span class='materials-confidence'>{score:.2f}%</span></td>"
+            f"<td><span class='materials-level level-{level_class}'>{html.escape(level)}</span></td>"
+            "</tr>"
+        )
+    return (
+        "<section class='materials-table-panel'>"
+        "<div class='materials-table-head'>"
+        "<div>"
+        "<div class='materials-table-title'>Tabel Seluruh Item RAB</div>"
+        f"<div class='materials-table-copy'>{len(frame)} item ditampilkan. Klik header kolom untuk sort langsung di UI.</div>"
+        "</div>"
+        "</div>"
+        "<div class='materials-table-wrap'>"
+        "<table class='materials-table' data-sort-dir='asc'>"
+        "<thead><tr>"
+        "<th><button class='materials-sort-header' data-sort='row' type='button'>Row</button></th>"
+        "<th><button class='materials-sort-header' data-sort='name' type='button'>Item RAB</button></th>"
+        "<th><button class='materials-sort-header' data-sort='category' type='button'>Kategori NAC</button></th>"
+        "<th><button class='materials-sort-header' data-sort='confidence' type='button'>Confidence</button></th>"
+        "<th><button class='materials-sort-header' data-sort='level' type='button'>Confidence Level</button></th>"
+        "</tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody>"
+        "</table>"
+        "</div>"
+        "</section>"
+    )
+
+
 def render_sorted_findings(results, sort_by, sort_order):
     return gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=bool(results))
 
@@ -1816,7 +2014,7 @@ def reset_analysis_visibility():
         gr.update(visible=False),
         gr.update(visible=False),
         gr.update(value="", visible=False),
-        gr.update(value=pd.DataFrame(), visible=False),
+        gr.update(value="", visible=False),
     )
 
 
@@ -2376,22 +2574,51 @@ def save_simple_settings_ui(review_mode, semantic_mode, ocr_mode):
     return f"Settings tersimpan: mode review {review_mode}, semantic {semantic_mode}, OCR {ocr_mode}."
 
 
-DELETE_KEYWORD_JS = """
+APP_INTERACTIONS_JS = """
 () => {
   if (window.__rabNacDeleteKeywordBound) return;
   window.__rabNacDeleteKeywordBound = true;
   document.addEventListener("click", (event) => {
     const button = event.target.closest("[data-delete-keyword-id]");
-    if (!button) return;
+    if (button) {
+      event.preventDefault();
+      const keywordId = button.getAttribute("data-delete-keyword-id");
+      const input = document.querySelector("#delete-kw-id textarea, #delete-kw-id input");
+      const trigger = document.querySelector("#delete-kw-trigger button");
+      if (!input || !trigger) return;
+      input.value = keywordId;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      trigger.click();
+      return;
+    }
+
+    const sortButton = event.target.closest(".materials-sort-header");
+    if (!sortButton) return;
     event.preventDefault();
-    const keywordId = button.getAttribute("data-delete-keyword-id");
-    const input = document.querySelector("#delete-kw-id textarea, #delete-kw-id input");
-    const trigger = document.querySelector("#delete-kw-trigger button");
-    if (!input || !trigger) return;
-    input.value = keywordId;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-    trigger.click();
+    const table = sortButton.closest("table");
+    const tbody = table?.querySelector("tbody");
+    if (!table || !tbody) return;
+    const sortKey = sortButton.getAttribute("data-sort");
+    const previousKey = table.getAttribute("data-sort-key");
+    const previousDir = table.getAttribute("data-sort-dir") || "asc";
+    const nextDir = previousKey === sortKey && previousDir === "asc" ? "desc" : "asc";
+    table.setAttribute("data-sort-key", sortKey);
+    table.setAttribute("data-sort-dir", nextDir);
+    const numericKeys = new Set(["row", "confidence"]);
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    rows.sort((a, b) => {
+      const av = a.dataset[sortKey] || "";
+      const bv = b.dataset[sortKey] || "";
+      let result;
+      if (numericKeys.has(sortKey)) {
+        result = (parseFloat(av) || 0) - (parseFloat(bv) || 0);
+      } else {
+        result = av.localeCompare(bv, "id", { sensitivity: "base", numeric: true });
+      }
+      return nextDir === "asc" ? result : -result;
+    });
+    rows.forEach((row) => tbody.appendChild(row));
   });
 }
 """
@@ -2472,7 +2699,7 @@ def app():
                             value=export_all_excel_ui,
                             inputs=results_state,
                         )
-                all_materials_df = gr.Dataframe(label="Tabel Seluruh Material RAB", visible=False)
+                all_materials_df = gr.HTML(visible=False)
                 result_msg = gr.Markdown(visible=False)
                 results_df = gr.Dataframe(label="Review Hasil", visible=False)
             with gr.Tab("Analisa Redaksi NAC"):
@@ -2565,7 +2792,7 @@ def app():
         learn_btn.click(learning_ui, outputs=learning_html)
         save_set.click(save_simple_settings_ui, [review_mode, semantic_mode, ocr_mode], settings_msg)
         reset_db.click(reset_db_ui, outputs=settings_msg)
-        demo.load(None, None, None, js=DELETE_KEYWORD_JS)
+        demo.load(None, None, None, js=APP_INTERACTIONS_JS)
     return demo
 
 
