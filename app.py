@@ -1565,6 +1565,35 @@ th {
     background: #eef3f8 !important;
 }
 
+.review-output-panel,
+.review-output-panel > div,
+.review-output-panel .form {
+    overflow: visible !important;
+}
+
+.review-output-panel {
+    margin-top: 18px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.review-output-panel [data-testid="html"],
+.review-output-panel [data-testid="dataframe"] {
+    max-width: 100% !important;
+    overflow: visible !important;
+}
+
+.review-output-panel .findings-panel {
+    margin: 16px 0 22px !important;
+}
+
+.review-output-panel .findings-toolbar,
+.review-output-panel .finding-card {
+    color: #1f2d3d !important;
+}
+
 .gradio-container [data-testid="dataframe"],
 .gradio-container [data-testid="dataframe"] *,
 .dataframe,
@@ -1858,10 +1887,11 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
     items, msg = build_items(upload_state, text_columns, volume_col, unit_col, unit_price_col, total_price_col)
     if not items:
         return (
-            gr.update(value="", visible=False),
-            gr.update(value="", visible=False),
-            [],
+            gr.update(visible=True),
             gr.update(value=f"Review belum dapat dijalankan. {msg}", visible=True),
+            gr.update(value="", visible=False),
+            gr.update(value=all_materials_dataframe([]), visible=False),
+            [],
             gr.update(visible=False),
             gr.update(visible=False),
         )
@@ -1869,18 +1899,20 @@ def run_review(upload_state, text_columns, volume_col, unit_col, unit_price_col,
         results = detect_items(items, db.get_settings())
     except Exception as exc:
         return (
-            gr.update(value="", visible=False),
-            gr.update(value="", visible=False),
-            [],
+            gr.update(visible=True),
             gr.update(value=f"Review gagal diproses: {exc}", visible=True),
+            gr.update(value="", visible=False),
+            gr.update(value=all_materials_dataframe([]), visible=False),
+            [],
             gr.update(visible=False),
             gr.update(visible=False),
         )
     return (
-        gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
-        gr.update(value=render_all_materials_table(results), visible=True),
-        results,
+        gr.update(visible=True),
         gr.update(value=f"Review selesai. {msg} Output pertama menampilkan confidence Sedang sampai Sangat tinggi. Output kedua menampilkan seluruh item RAB. {DISCLAIMER}", visible=True),
+        gr.update(value=render_findings_cards(results, sort_by, sort_order), visible=True),
+        gr.update(value=all_materials_dataframe(results), visible=True),
+        results,
         gr.update(visible=True),
         gr.update(visible=True),
     )
@@ -1955,10 +1987,10 @@ def all_materials_dataframe(results):
     columns = ["row_id", "item_per_rab", "matched_category", "final_confidence", "confidence_label"]
     labels = {
         "row_id": "Row",
-        "item_per_rab": "Nama Material",
+        "item_per_rab": "Item RAB",
         "matched_category": "Kategori NAC",
         "final_confidence": "Confidence %",
-        "confidence_label": "Kategori Confidence Level",
+        "confidence_label": "Confidence Level",
     }
     if frame.empty:
         return pd.DataFrame(columns=list(labels.values()))
@@ -2039,10 +2071,12 @@ def render_sorted_findings(results, sort_by, sort_order):
 def reset_analysis_visibility():
     return (
         gr.update(visible=False),
+        gr.update(value="", visible=False),
+        gr.update(value="", visible=False),
+        gr.update(value=all_materials_dataframe([]), visible=False),
+        gr.update(value="", visible=False),
         gr.update(visible=False),
-        gr.update(value="", visible=False),
-        gr.update(value="", visible=False),
-        gr.update(value="", visible=False),
+        gr.update(visible=False),
     )
 
 
@@ -2705,18 +2739,26 @@ def app():
                 total_price_col = gr.Dropdown(label="Total Price", visible=False)
                 run_btn = gr.Button("Run NAC Review", variant="primary")
                 run_status = gr.Markdown(visible=False)
-                with gr.Group(visible=False) as sort_panel:
-                    with gr.Row():
-                        sort_by = gr.Radio(["Confidence", "Row"], value="Confidence", label="Urutkan berdasarkan")
-                        sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi"], value="Tinggi ke rendah", label="Arah urutan")
-                auto_results_df = gr.HTML(visible=False)
-                with gr.Group(visible=False) as export_panel:
-                    with gr.Row():
-                        export_potential_pdf_btn = gr.DownloadButton("Export PDF Rangkuman Potensi NAC")
-                        export_all_pdf_btn = gr.DownloadButton("Export PDF Seluruh Material RAB")
-                        export_all_excel_btn = gr.DownloadButton("Export Excel Seluruh Material RAB")
-                all_materials_df = gr.HTML(visible=False)
-                result_msg = gr.Markdown(visible=False)
+                with gr.Group(visible=False, elem_classes=["review-output-panel"]) as review_output_panel:
+                    result_msg = gr.Markdown(visible=False)
+                    with gr.Group(visible=False) as sort_panel:
+                        with gr.Row():
+                            sort_by = gr.Radio(["Confidence", "Row"], value="Confidence", label="Urutkan berdasarkan")
+                            sort_order = gr.Radio(["Tinggi ke rendah", "Rendah ke tinggi"], value="Tinggi ke rendah", label="Arah urutan")
+                    auto_results_df = gr.HTML(visible=False)
+                    all_materials_df = gr.Dataframe(
+                        label="Tabel Seluruh Item RAB",
+                        value=all_materials_dataframe([]),
+                        headers=["Row", "Item RAB", "Kategori NAC", "Confidence %", "Confidence Level"],
+                        interactive=False,
+                        wrap=True,
+                        visible=False,
+                    )
+                    with gr.Group(visible=False) as export_panel:
+                        with gr.Row():
+                            export_potential_pdf_btn = gr.DownloadButton("Export PDF Rangkuman Potensi NAC")
+                            export_all_pdf_btn = gr.DownloadButton("Export PDF Seluruh Material RAB")
+                            export_all_excel_btn = gr.DownloadButton("Export Excel Seluruh Material RAB")
             with gr.Tab("Analisa Redaksi NAC"):
                 gr.Markdown("Ketik satu kalimat redaksi RAB. Sistem akan menghitung potensi NAC sebagai bantuan awal review internal.")
                 with gr.Group(elem_classes=["redaction-search"]):
@@ -2769,7 +2811,7 @@ def app():
             [preview, text_cols, volume_col, unit_col, unit_price_col, total_price_col, upload_msg, upload_state],
         ).then(
             reset_analysis_visibility,
-            outputs=[sort_panel, export_panel, auto_results_df, all_materials_df, result_msg],
+            outputs=[review_output_panel, result_msg, auto_results_df, all_materials_df, run_status, sort_panel, export_panel],
         )
         run_btn.click(
             review_started_ui,
@@ -2779,10 +2821,11 @@ def app():
             run_review,
             [upload_state, text_cols, volume_col, unit_col, unit_price_col, total_price_col, sort_by, sort_order],
             [
+                review_output_panel,
+                result_msg,
                 auto_results_df,
                 all_materials_df,
                 results_state,
-                result_msg,
                 sort_panel,
                 export_panel,
             ],

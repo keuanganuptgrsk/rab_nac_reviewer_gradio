@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.8.4 - Visible Review Output Fix - 2026-05-11
+
+- Membuat satu panel output review eksplisit yang muncul setelah `Run NAC Review`.
+- Menampilkan status review, card summary potensi NAC, tabel seluruh item RAB, dan tombol export dalam urutan stabil.
+- Mengembalikan tabel seluruh item RAB ke `gr.Dataframe` agar sort UI lebih stabil dan tidak terpotong oleh HTML custom.
+- Menjaga export tetap hanya berjalan saat tombol export diklik.
+
 ## v0.8.3 - Export Button Chain Fix - 2026-05-11
 
 - Mengubah tombol export agar tidak otomatis membuat PDF/Excel saat `results_state` berubah.

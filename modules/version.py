@@ -1,7 +1,7 @@
-APP_VERSION = "0.8.3"
-APP_RELEASE_TITLE = "Export Button Chain Fix"
+APP_VERSION = "0.8.4"
+APP_RELEASE_TITLE = "Visible Review Output Fix"
 APP_RELEASE_NOTES = (
-    "Tombol export tidak lagi otomatis berjalan saat hasil review berubah; export hanya diproses saat tombol diklik."
+    "Output review dibuat dalam satu panel eksplisit dengan card summary dan tabel DataFrame agar hasil langsung terlihat setelah Run NAC Review."
 )
 
 
