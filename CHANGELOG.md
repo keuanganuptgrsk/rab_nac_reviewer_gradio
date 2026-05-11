@@ -2,6 +2,13 @@
 
 Semua penambahan fitur harus dicatat dengan format: versi, judul, tanggal, dan keterangan.
 
+## v0.9.0 - UI System Reset and Visible Review Flow - 2026-05-11
+
+- Menonaktifkan CSS legacy yang terlalu banyak menimpa komponen Gradio dan menggantinya dengan design system scoped yang lebih kecil.
+- Merapikan header, tabs, upload area, output review, Database NAC, Analisa Redaksi NAC, Feedback & Learning, dan Settings agar tidak saling bertabrakan.
+- Menambahkan KPI ringkas pada card summary hasil review: total item RAB, jumlah potensi NAC confidence sedang-tinggi, dan confidence tertinggi.
+- Menjaga tabel seluruh item RAB memakai `gr.Dataframe` agar output lebih stabil, terbaca, dan dapat disort dari UI.
+
 ## v0.8.4 - Visible Review Output Fix - 2026-05-11
 
 - Membuat satu panel output review eksplisit yang muncul setelah `Run NAC Review`.

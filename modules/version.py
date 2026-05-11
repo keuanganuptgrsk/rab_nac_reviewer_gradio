@@ -1,7 +1,7 @@
-APP_VERSION = "0.8.4"
-APP_RELEASE_TITLE = "Visible Review Output Fix"
+APP_VERSION = "0.9.0"
+APP_RELEASE_TITLE = "UI System Reset and Visible Review Flow"
 APP_RELEASE_NOTES = (
-    "Output review dibuat dalam satu panel eksplisit dengan card summary dan tabel DataFrame agar hasil langsung terlihat setelah Run NAC Review."
+    "UI direset dengan design system scoped, alur hasil review dibuat jelas, dan output utama diprioritaskan agar langsung terlihat."
 )
 
 
